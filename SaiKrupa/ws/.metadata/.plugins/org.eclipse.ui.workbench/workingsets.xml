@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1467094079223_0" label="saikrupa" name="saikrupa">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/ska-service-module" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/ska-ui-module" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/saikrupa" type="4"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1467178912307_1" label="Window Working Set" name="Aggregate for window 1467178912306"/>
+</workingSetManager>

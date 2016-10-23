@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;ska-ui-module/src/main/resources/icons/login-button-png-24.png&apos; to &apos;login-button.png&apos;" description="Rename resource &apos;login-button-png-24.png&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/resources/icons/login-button-png-24.png" name="login-button.png" stamp="1475321516037" updateReferences="true"/>
+</session>

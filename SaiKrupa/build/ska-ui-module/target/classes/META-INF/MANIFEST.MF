@@ -1,0 +1,1 @@
+Main-Class: com.saikrupa.app.ui.SKAMainApp

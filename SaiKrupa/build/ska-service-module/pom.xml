@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.saikrupa</groupId>
+		<artifactId>saikrupa</artifactId>
+		<version>0.0.1-R1</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ska-service-module</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.15</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop -->
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>fop</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.6.3</version>
+		</dependency>
+	</dependencies>
+
+</project>
