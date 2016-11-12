@@ -1,0 +1,9 @@
+package com.saikrupa.app.dto;
+
+public class EmployeeData extends VendorData {
+
+	public EmployeeData() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

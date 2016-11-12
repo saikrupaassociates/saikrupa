@@ -1,0 +1,23 @@
+package com.saikrupa.app.service.report.component;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+
+public class ReportTableHeaderCell extends PdfPCell {
+
+	public ReportTableHeaderCell(Phrase phrase) {
+		Paragraph p = new Paragraph(phrase.getContent(), FontFactory.getFont(FontFactory.TIMES, 12, BaseColor.BLACK));
+		setBackgroundColor(new BaseColor(130, 183, 208));
+		p.setAlignment(Element.ALIGN_CENTER);
+		setPhrase(p);
+	}
+
+	public ReportTableHeaderCell() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

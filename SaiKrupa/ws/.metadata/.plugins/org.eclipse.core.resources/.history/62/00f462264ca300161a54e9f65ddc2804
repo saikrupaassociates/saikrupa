@@ -1,0 +1,9 @@
+package com.saikrupa.app.dto;
+
+public class EmployeeSalaryData {
+
+	public EmployeeSalaryData() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

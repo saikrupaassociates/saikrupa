@@ -29,10 +29,8 @@ import com.saikrupa.app.dao.impl.DefaultOrderDAO;
 import com.saikrupa.app.dto.DeliveryStatus;
 import com.saikrupa.app.dto.OrderData;
 import com.saikrupa.app.dto.OrderEntryData;
-import com.saikrupa.app.dto.OrderStatus;
 import com.saikrupa.app.dto.PaymentStatus;
 import com.saikrupa.app.ui.BaseAppDialog;
-import com.saikrupa.app.ui.TestApp;
 import com.saikrupa.app.ui.models.OrderEntryTableModel;
 
 public class TestUpdateOrderDialog extends BaseAppDialog {

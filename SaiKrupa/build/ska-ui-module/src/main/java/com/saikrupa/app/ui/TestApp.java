@@ -2,6 +2,7 @@ package com.saikrupa.app.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -11,10 +12,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
@@ -37,9 +45,9 @@ import com.alee.laf.text.WebPasswordField;
 import com.alee.laf.text.WebTextArea;
 import com.alee.laf.text.WebTextField;
 import com.alee.utils.SwingUtils;
-import com.saikrupa.app.dao.OrderDAO;
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamPanel;
 import com.saikrupa.app.dao.impl.DefaultOrderDAO;
-import com.saikrupa.app.dto.DeliveryData;
 import com.saikrupa.app.dto.InvestmentData;
 import com.saikrupa.app.dto.OrderEntryData;
 import com.saikrupa.app.dto.OrderStatus;
@@ -47,7 +55,6 @@ import com.saikrupa.app.ui.models.DeliveryStatusModel;
 import com.saikrupa.app.ui.models.InvestmentTableModel;
 import com.saikrupa.app.ui.models.OrderEntryTableModel;
 import com.saikrupa.app.ui.models.PaymentStatusModel;
-import com.saikrupa.app.util.DateUtil;
 
 public class TestApp extends WebFrame {
 
@@ -55,61 +62,247 @@ public class TestApp extends WebFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private Webcam webcam = null;
+	private WebPanel photoPanel;
+	private WebPanel imagePanel;
 
 	public TestApp() {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		//showInputOption();
-		showLogin();
+		// showInputOption();
+		employeeCreate();
 	}
-	
-	
+
+	private void employeeCreate() {
+		WebPanel formPanel = new WebPanel();
+		formPanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+		GridBagLayout layout = new GridBagLayout();
+		formPanel.setLayout(layout);
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+
+		WebLabel l1 = new WebLabel("Employee Name : ", SwingConstants.RIGHT);
+		final WebTextField nameText = new WebTextField("30");
+		nameText.setText("Prasun Kumar Sarangi");
+
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(0, 0, 10, 0);
+		layout.setConstraints(l1, c);
+		formPanel.add(l1);
+
+		c.gridx = 1;
+		c.gridy = 0;
+		c.insets = new Insets(0, 10, 10, 0);
+
+		layout.setConstraints(nameText, c);
+		formPanel.add(nameText);
+
+		WebLabel l2 = new WebLabel("Primary Contact No : ", SwingConstants.RIGHT);
+		final WebTextField contactText = new WebTextField("15");
+		contactText.setText("9035476943");
+
+		c.gridx = 0;
+		c.gridy = 1;
+
+		layout.setConstraints(l2, c);
+		formPanel.add(l2);
+
+		c.gridx = 1;
+		c.gridy = 1;
+		c.insets = new Insets(0, 10, 10, 0);
+
+		layout.setConstraints(contactText, c);
+		formPanel.add(contactText);
+
+		WebLabel l3 = new WebLabel("Date of Joining : ", SwingConstants.RIGHT);
+		final WebDateField dojField = new WebDateField(new Date());
+
+		c.gridx = 0;
+		c.gridy = 2;
+		c.anchor = GridBagConstraints.NORTH;
+		layout.setConstraints(l3, c);
+		formPanel.add(l3);
+
+		c.gridx = 1;
+		c.gridy = 2;
+		c.insets = new Insets(0, 10, 10, 0);
+
+		layout.setConstraints(dojField, c);
+		formPanel.add(dojField);
+
+		WebLabel l4 = new WebLabel("ID Proof Document : ", SwingConstants.RIGHT);
+		final WebTextField idProofDocumentField = new WebTextField(15);
+
+		c.gridx = 0;
+		c.gridy = 3;
+		c.anchor = GridBagConstraints.NORTH;
+		layout.setConstraints(l4, c);
+		formPanel.add(l4);
+
+		c.gridx = 1;
+		c.gridy = 3;
+
+		c.insets = new Insets(0, 10, 10, 0);
+
+		layout.setConstraints(idProofDocumentField, c);
+		formPanel.add(idProofDocumentField);
+
+		WebLabel l5 = new WebLabel("Address Proof Document : ", SwingConstants.RIGHT);
+		final WebTextField addressProofField = new WebTextField(15);
+
+		c.gridx = 0;
+		c.gridy = 4;
+		c.anchor = GridBagConstraints.NORTH;
+		layout.setConstraints(l5, c);
+		formPanel.add(l5);
+
+		c.gridx = 1;
+		c.gridy = 4;
+		c.insets = new Insets(0, 10, 10, 0);
+
+		layout.setConstraints(addressProofField, c);
+		formPanel.add(addressProofField);
+
+		imagePanel = new WebPanel();
+		imagePanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+		GridBagLayout imageLayout = new GridBagLayout();
+		imagePanel.setLayout(imageLayout);
+		GridBagConstraints c1 = new GridBagConstraints();
+		c1.fill = GridBagConstraints.VERTICAL;
+
+		photoPanel = new WebPanel(new FlowLayout(FlowLayout.CENTER));
+		photoPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+		ImageIcon image = new ImageIcon("D:/gaga/image/download.jpg");
+		WebLabel imageLabel = new WebLabel("", image, WebLabel.CENTER);
+		photoPanel.add(imageLabel);
+		
+		c1.gridx = 0;
+		c1.gridy = 0;
+		c1.insets = new Insets(0, 10, 10, 0);
+		imageLayout.setConstraints(photoPanel, c1);
+		imagePanel.add(photoPanel);
+
+		final WebButton startCaptureButton = new WebButton("Start Capture");
+		startCaptureButton.setActionCommand("START_WEBCAM");
+		c1.gridx = 0;
+		c1.gridy = 1;
+		c1.insets = new Insets(0, 10, 10, 0);
+		imageLayout.setConstraints(startCaptureButton, c1);
+		imagePanel.add(startCaptureButton);
+
+		WebButton captureButton = new WebButton("Capture Photo");
+		captureButton.setActionCommand("CAPTURE");
+		c1.gridx = 0;
+		c1.gridy = 2;
+		c1.insets = new Insets(0, 10, 10, 0);
+		imageLayout.setConstraints(captureButton, c1);
+		imagePanel.add(captureButton);
+
+		WebButton createEmployeeButton = new WebButton("Create");
+		
+		c.gridx = 1;	
+		c.gridy = 8;
+		c.insets = new Insets(10, 10, 0, 0);
+		c.gridwidth = 1;
+		layout.setConstraints(createEmployeeButton, c);
+		formPanel.add(createEmployeeButton);
+
+		getContentPane().add(new GroupPanel(formPanel), BorderLayout.WEST);
+		getContentPane().add(new GroupPanel(imagePanel,new JPanel()), BorderLayout.EAST);
+		pack();
+
+		ActionListener l = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(e.getActionCommand().equalsIgnoreCase("START_WEBCAM")) {
+					webcam = Webcam.getDefault();
+					//webcam.setViewSize(new Dimension(640, 480));
+					if (webcam != null) {
+						imagePanel.remove(photoPanel);
+						WebcamPanel panel = new WebcamPanel(webcam);
+						panel.setFPSDisplayed(true);
+						panel.setMirrored(false);
+						imagePanel.add(panel);
+						revalidate();
+						
+					} else {
+						System.out.println("No webcam detected");
+					}
+				} else if(e.getActionCommand().equalsIgnoreCase("CAPTURE")) {
+					if(webcam != null) {
+						webcam.open();
+						BufferedImage image = webcam.getImage();
+						try {
+							ImageIO.write(image, "PNG", new File("D:/gaga/capture/test.png"));
+							webcam.close();
+							
+							ImageIcon capturedImage = new ImageIcon("D:/gaga/capture/test.png");
+							photoPanel.removeAll();
+							WebLabel label = new WebLabel("", capturedImage, WebLabel.CENTER);
+							photoPanel.add(label);
+							revalidate();
+							
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
+				}
+			}
+		};
+		createEmployeeButton.addActionListener(l);
+		startCaptureButton.addActionListener(l);
+		captureButton.addActionListener(l);
+	}
+
 	private void showLogin() {
-		WebPanel formPanel = new WebPanel();		
+		WebPanel formPanel = new WebPanel();
 		GridBagLayout layout = new GridBagLayout();
 		formPanel.setLayout(layout);
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 
 		WebLabel l1 = new WebLabel("User ID : ", SwingConstants.RIGHT);
-		final WebTextField codeText = new WebTextField(15);		
+		final WebTextField codeText = new WebTextField(15);
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 10, 0); // Left padding
+		c.insets = new Insets(0, 0, 10, 0);
 		layout.setConstraints(l1, c);
 		formPanel.add(l1);
-		
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(codeText, c);
 		formPanel.add(codeText);
-		
+
 		WebLabel l2 = new WebLabel("Password : ", SwingConstants.RIGHT);
 		final WebPasswordField passwordText = new WebPasswordField(15);
-		
+
 		c.gridx = 0;
 		c.gridy = 1;
 
 		layout.setConstraints(l2, c);
 		formPanel.add(l2);
-		
+
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(passwordText, c);
 		formPanel.add(passwordText);
-		
-		WebButton loginButton = new WebButton("Login");		
+
+		WebButton loginButton = new WebButton("Login");
 		c.gridx = 2;
 		c.gridy = 1;
 		c.insets = new Insets(0, 10, 10, 0);
 		layout.setConstraints(loginButton, c);
 		formPanel.add(loginButton);
-		
+
 		WebPanel loginPanel = new WebPanel(new BorderLayout());
 		loginPanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
 		loginPanel.add(formPanel, BorderLayout.CENTER);
@@ -118,22 +311,16 @@ public class TestApp extends WebFrame {
 		setVisible(true);
 	}
 
-
 	private void showInputOption() {
 		WebPanel formPanel = new WebPanel(new FlowLayout());
 		WebButton button = new WebButton("Click");
 		button.addActionListener(new ActionListener() {
-			
+
 			public void actionPerformed(ActionEvent e) {
-				Object[] selectionValues = {OrderStatus.COMPLETED, OrderStatus.CONFIRMED, OrderStatus.DELIVERED};
+				Object[] selectionValues = { OrderStatus.COMPLETED, OrderStatus.CONFIRMED, OrderStatus.DELIVERED };
 				OrderStatus initialSelectionValue = OrderStatus.COMPLETED;
-				OrderStatus data = (OrderStatus) WebOptionPane.showInputDialog(
-						TestApp.this, 
-						"Order Status", 
-						"Select Order Status", 
-						WebOptionPane.QUESTION_MESSAGE, 
-						null, 
-						selectionValues, 
+				OrderStatus data = (OrderStatus) WebOptionPane.showInputDialog(TestApp.this, "Order Status",
+						"Select Order Status", WebOptionPane.QUESTION_MESSAGE, null, selectionValues,
 						initialSelectionValue);
 				System.out.println(data.toString());
 			}
@@ -142,7 +329,7 @@ public class TestApp extends WebFrame {
 		getContentPane().add(formPanel, BorderLayout.NORTH);
 		pack();
 		setVisible(true);
-		
+
 	}
 
 	private WebPanel orderLineDetailPanel() {
@@ -171,41 +358,41 @@ public class TestApp extends WebFrame {
 
 		WebPanel formPanel = new WebPanel();
 		mainPanel.add(formPanel, BorderLayout.WEST);
-		
+
 		formPanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
 		GridBagLayout layout = new GridBagLayout();
 		formPanel.setLayout(layout);
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.NORTHEAST;
-		
+
 		WebLabel l1 = new WebLabel("Order Status : ", SwingConstants.RIGHT);
 		final WebLabel orderStatusLabel = new WebLabel("SHIPMENT PENDING");
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 10, 0); // Left padding
+		c.insets = new Insets(0, 0, 10, 0);
 		layout.setConstraints(l1, c);
 		formPanel.add(l1);
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(orderStatusLabel, c);
 		formPanel.add(orderStatusLabel);
-		
+
 		WebLabel l2 = new WebLabel("Payment Status : ", SwingConstants.RIGHT);
 		final WebComboBox paymentStatusCombo = new WebComboBox(new PaymentStatusModel());
 
 		c.gridx = 2;
 		c.gridy = 0;
-		c.insets = new Insets(0, 20, 10, 0); // Left padding
+		c.insets = new Insets(0, 20, 10, 0);
 		layout.setConstraints(l2, c);
 		formPanel.add(l2);
 
 		c.gridx = 3;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(paymentStatusCombo, c);
 		formPanel.add(paymentStatusCombo);
@@ -215,21 +402,20 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 4;
 		c.gridy = 0;
-		c.insets = new Insets(0, 20, 10, 0); // Left padding
+		c.insets = new Insets(0, 20, 10, 0);
 		layout.setConstraints(l3, c);
 		formPanel.add(l3);
 
 		c.gridx = 5;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(deliveryStatusCombo, c);
-		formPanel.add(deliveryStatusCombo);	
+		formPanel.add(deliveryStatusCombo);
 		return mainPanel;
 
 	}
 
-	
 	private void testShowProduct() {
 
 		WebPanel formPanel = new WebPanel();
@@ -244,13 +430,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 10, 0); // Left padding
+		c.insets = new Insets(0, 0, 10, 0);
 		layout.setConstraints(l1, c);
 		formPanel.add(l1);
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(codeText, c);
 		formPanel.add(codeText);
@@ -266,7 +452,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(nameText, c);
 		formPanel.add(nameText);
@@ -282,7 +468,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 2;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(actualQuantityText, c);
 		formPanel.add(actualQuantityText);
@@ -299,7 +485,7 @@ public class TestApp extends WebFrame {
 		c.gridx = 1;
 		c.gridy = 3;
 
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(receiptNoText, c);
 		formPanel.add(receiptNoText);
@@ -315,7 +501,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 4;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(deliveryDateText, c);
 		formPanel.add(deliveryDateText);
@@ -331,42 +517,44 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 5;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(deliveryVehicleText, c);
 		formPanel.add(deliveryVehicleText);
 
-//		WebLabel l7 = new WebLabel("Quantity Added : ", SwingConstants.RIGHT);
-//		final WebTextField addedQuantityText = new WebTextField(15);
-//
-//		c.gridx = 0;
-//		c.gridy = 6;
-//		c.anchor = GridBagConstraints.NORTH;
-//		layout.setConstraints(l7, c);
-//		formPanel.add(l7);
-//
-//		c.gridx = 1;
-//		c.gridy = 6;
-//		c.insets = new Insets(0, 10, 5, 0); // Left padding
-//
-//		layout.setConstraints(addedQuantityText, c);
-//		formPanel.add(addedQuantityText);
-//
-//		WebLabel l8 = new WebLabel("Quantity Reserved : ", SwingConstants.RIGHT);
-//		final WebTextField reservedQuantityText = new WebTextField(15);
-//
-//		c.gridx = 0;
-//		c.gridy = 7;
-//		c.anchor = GridBagConstraints.NORTH;
-//		layout.setConstraints(l8, c);
-//		formPanel.add(l8);
-//
-//		c.gridx = 1;
-//		c.gridy = 7;
-//		c.insets = new Insets(0, 10, 5, 0); // Left padding
-//
-//		layout.setConstraints(reservedQuantityText, c);
-//		formPanel.add(reservedQuantityText);
+		// WebLabel l7 = new WebLabel("Quantity Added : ",
+		// SwingConstants.RIGHT);
+		// final WebTextField addedQuantityText = new WebTextField(15);
+		//
+		// c.gridx = 0;
+		// c.gridy = 6;
+		// c.anchor = GridBagConstraints.NORTH;
+		// layout.setConstraints(l7, c);
+		// formPanel.add(l7);
+		//
+		// c.gridx = 1;
+		// c.gridy = 6;
+		// c.insets = new Insets(0, 10, 5, 0);
+		//
+		// layout.setConstraints(addedQuantityText, c);
+		// formPanel.add(addedQuantityText);
+		//
+		// WebLabel l8 = new WebLabel("Quantity Reserved : ",
+		// SwingConstants.RIGHT);
+		// final WebTextField reservedQuantityText = new WebTextField(15);
+		//
+		// c.gridx = 0;
+		// c.gridy = 7;
+		// c.anchor = GridBagConstraints.NORTH;
+		// layout.setConstraints(l8, c);
+		// formPanel.add(l8);
+		//
+		// c.gridx = 1;
+		// c.gridy = 7;
+		// c.insets = new Insets(0, 10, 5, 0);
+		//
+		// layout.setConstraints(reservedQuantityText, c);
+		// formPanel.add(reservedQuantityText);
 
 		WebButton updateProductButton = new WebButton("Update");
 		updateProductButton.addActionListener(new ActionListener() {
@@ -377,7 +565,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 8;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 1;
 		layout.setConstraints(updateProductButton, c);
 		formPanel.add(updateProductButton);
@@ -400,13 +588,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 10, 0); // Left padding
+		c.insets = new Insets(0, 0, 10, 0);
 		layout.setConstraints(l1, c);
 		formPanel.add(l1);
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(vendorNameText, c);
 		formPanel.add(vendorNameText);
@@ -422,7 +610,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(primaryContact, c);
 		formPanel.add(primaryContact);
@@ -438,7 +626,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 2;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(totalInvestmentsLabel, c);
 		formPanel.add(totalInvestmentsLabel);
@@ -459,7 +647,7 @@ public class TestApp extends WebFrame {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 1;
 		c.gridy = 20;
-		c.insets = new Insets(0, 0, 0, 20); // Left padding
+		c.insets = new Insets(0, 0, 0, 20);
 		// c.weightx = 100.0;
 		// c.weighty = 100.0;
 
@@ -523,13 +711,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 10, 0); // Left padding
+		c.insets = new Insets(0, 0, 10, 0);
 		layout.setConstraints(l1, c);
 		formPanel.add(l1);
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(vendorNameText, c);
 		formPanel.add(vendorNameText);
@@ -542,7 +730,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(primaryContact, c);
 		formPanel.add(primaryContact);
@@ -555,7 +743,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 2;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(investDate, c);
 		formPanel.add(investDate);
@@ -569,7 +757,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 4;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 1;
 		layout.setConstraints(createVendorButton, c);
 		formPanel.add(createVendorButton);
@@ -598,13 +786,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 10, 0); // Left padding
+		c.insets = new Insets(0, 0, 10, 0);
 		layout.setConstraints(l1, c);
 		formPanel.add(l1);
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(vendorNameText, c);
 		formPanel.add(vendorNameText);
@@ -617,7 +805,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(primaryContact, c);
 		formPanel.add(primaryContact);
@@ -630,7 +818,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 2;
-		c.insets = new Insets(0, 10, 0, 0); // Left padding
+		c.insets = new Insets(0, 10, 0, 0);
 		c.gridwidth = 3;
 		WebScrollPane areaScroll = new WebScrollPane(contactPersonsList);
 		areaScroll.setBorder(primaryContact.getBorder());
@@ -646,7 +834,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 4;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 1;
 		layout.setConstraints(createVendorButton, c);
 		formPanel.add(createVendorButton);
@@ -675,13 +863,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 10, 0); // Left padding
+		c.insets = new Insets(0, 0, 10, 0);
 		layout.setConstraints(l1, c);
 		formPanel.add(l1);
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(vendorNameText, c);
 		formPanel.add(vendorNameText);
@@ -694,7 +882,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(primaryContact, c);
 		formPanel.add(primaryContact);
@@ -707,7 +895,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 2;
-		c.insets = new Insets(0, 10, 0, 0); // Left padding
+		c.insets = new Insets(0, 10, 0, 0);
 		c.gridwidth = 3;
 		WebScrollPane areaScroll = new WebScrollPane(contactPersonsList);
 		areaScroll.setBorder(primaryContact.getBorder());
@@ -716,7 +904,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 4;
 		c.gridy = 2;
-		c.insets = new Insets(0, 1, 0, 0); // Left padding
+		c.insets = new Insets(0, 1, 0, 0);
 		// c.anchor = GridBagConstraints.NORTH;
 		WebButton addContactPerson = new WebButton();
 		addContactPerson.setText("+");
@@ -732,7 +920,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 4;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 1;
 		layout.setConstraints(createVendorButton, c);
 		formPanel.add(createVendorButton);
@@ -760,13 +948,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets(0, 0, 10, 0); // Left padding
+		c.insets = new Insets(0, 0, 10, 0);
 		layout.setConstraints(l1, c);
 		formPanel.add(l1);
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(vendorNameText, c);
 		formPanel.add(vendorNameText);
@@ -779,7 +967,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(0, 10, 10, 0); // Left padding
+		c.insets = new Insets(0, 10, 10, 0);
 
 		layout.setConstraints(primaryContact, c);
 		formPanel.add(primaryContact);
@@ -800,7 +988,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 3;
-		c.insets = new Insets(20, 10, 0, 0); // Left padding
+		c.insets = new Insets(20, 10, 0, 0);
 		layout.setConstraints(addressHeader, c);
 		formPanel.add(addressHeader);
 
@@ -809,13 +997,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 4;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(line1, c);
 		formPanel.add(line1);
 
 		c.gridx = 1;
 		c.gridy = 4;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(line1Text, c);
 		formPanel.add(line1Text);
 
@@ -824,13 +1012,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 5;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(line2, c);
 		formPanel.add(line2);
 
 		c.gridx = 1;
 		c.gridy = 5;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(line2Text, c);
 		formPanel.add(line2Text);
 
@@ -839,13 +1027,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 6;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(line3, c);
 		formPanel.add(line3);
 
 		c.gridx = 1;
 		c.gridy = 6;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(line3Text, c);
 		formPanel.add(line3Text);
 
@@ -858,7 +1046,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 7;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(addContactButton, c);
 		formPanel.add(addContactButton);
 
@@ -893,7 +1081,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 15, 0, 0); // Left padding
+		c.insets = new Insets(0, 15, 0, 0);
 		layout.setConstraints(t1, c);
 		formPanel.add(t1);
 
@@ -905,7 +1093,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(15, 15, 0, 0); // Left padding
+		c.insets = new Insets(15, 15, 0, 0);
 		layout.setConstraints(t2, c);
 		formPanel.add(t2);
 
@@ -917,7 +1105,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 2;
-		c.insets = new Insets(15, 15, 0, 0); // Left padding
+		c.insets = new Insets(15, 15, 0, 0);
 		layout.setConstraints(t3, c);
 		formPanel.add(t3);
 
@@ -929,7 +1117,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 3;
-		c.insets = new Insets(15, 15, 0, 0); // Left padding
+		c.insets = new Insets(15, 15, 0, 0);
 		layout.setConstraints(t4, c);
 		formPanel.add(t4);
 
@@ -942,7 +1130,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 4;
-		c.insets = new Insets(15, 15, 0, 0); // Left padding
+		c.insets = new Insets(15, 15, 0, 0);
 		c.gridwidth = 1;
 		layout.setConstraints(buttPanel, c);
 		formPanel.add(buttPanel);
@@ -986,7 +1174,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 0, 0); // Left padding
+		c.insets = new Insets(0, 10, 0, 0);
 		layout.setConstraints(c1, c);
 		formPanel.add(c1);
 
@@ -1000,19 +1188,19 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 3;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 0, 0); // Left padding
+		c.insets = new Insets(0, 10, 0, 0);
 		layout.setConstraints(t2, c);
 		formPanel.add(t2);
 
 		c.gridx = 0;
 		c.gridy = 1;
-		c.insets = new Insets(10, 0, 0, 0); // Left padding
+		c.insets = new Insets(10, 0, 0, 0);
 		layout.setConstraints(l3, c);
 		formPanel.add(l3);
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(t3, c);
 		formPanel.add(t3);
 
@@ -1020,13 +1208,13 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 2;
 		c.gridy = 1;
-		c.insets = new Insets(10, 0, 0, 0); // Left padding
+		c.insets = new Insets(10, 0, 0, 0);
 		layout.setConstraints(l4, c);
 		formPanel.add(l4);
 
 		c.gridx = 3;
 		c.gridy = 1;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(t4, c);
 		formPanel.add(t4);
 
@@ -1035,14 +1223,14 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 0;
 		c.gridy = 3;
-		c.insets = new Insets(10, 0, 0, 0); // Left padding
+		c.insets = new Insets(10, 0, 0, 0);
 		c.anchor = GridBagConstraints.NORTH;
 		layout.setConstraints(l5, c);
 		formPanel.add(l5);
 
 		c.gridx = 1;
 		c.gridy = 3;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 3;
 		WebScrollPane areaScroll = new WebScrollPane(area);
 		areaScroll.setBorder(t3.getBorder());
@@ -1053,7 +1241,7 @@ public class TestApp extends WebFrame {
 
 		c.gridx = 1;
 		c.gridy = 4;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 1;
 		layout.setConstraints(b1, c);
 		formPanel.add(b1);

@@ -1,0 +1,5 @@
+package com.saikrupa.app.dao;
+
+public interface EmployeeDAO {
+
+}

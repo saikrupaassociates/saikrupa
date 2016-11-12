@@ -1,0 +1,8 @@
+package com.saikrupa.app.dto;
+
+public class EmployeeData extends VendorData {
+
+	public EmployeeData() {
+		setLoginDisabled(false);
+	}
+}

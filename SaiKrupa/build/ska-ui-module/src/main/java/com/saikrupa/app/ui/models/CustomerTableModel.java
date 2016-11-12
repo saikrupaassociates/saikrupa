@@ -6,7 +6,6 @@ import javax.swing.table.AbstractTableModel;
 
 import com.saikrupa.app.dto.AddressData;
 import com.saikrupa.app.dto.CustomerData;
-import com.saikrupa.app.dto.VendorData;
 
 public class CustomerTableModel extends AbstractTableModel {
 

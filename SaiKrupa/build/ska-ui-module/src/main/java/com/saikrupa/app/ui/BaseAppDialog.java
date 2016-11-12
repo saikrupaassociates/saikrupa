@@ -25,9 +25,12 @@ public class BaseAppDialog extends WebDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	public BaseAppDialog(SKAMainApp owner) {
 		super(owner, true);
+		setResizable(false);
+		setLocationRelativeTo(owner);
+		setShowResizeCorner(false);
 	}
 
 	public BaseAppDialog() {
@@ -40,8 +43,10 @@ public class BaseAppDialog extends WebDialog {
 	}
 
 	public BaseAppDialog(Dialog owner) {
-		super(owner);
-		// TODO Auto-generated constructor stub
+		super(owner, true);
+		setResizable(false);
+		setLocationRelativeTo(owner);
+		setShowResizeCorner(false);
 	}
 
 	public BaseAppDialog(Component owner) {
@@ -118,7 +123,7 @@ public class BaseAppDialog extends WebDialog {
 		super(owner, title, modalityType, gc);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public void showSuccessNotification() {
 		final WebNotification notificationPopup = new WebNotification();
 		notificationPopup.setIcon(NotificationIcon.plus);
@@ -134,27 +139,24 @@ public class BaseAppDialog extends WebDialog {
 		NotificationManager.showNotification(notificationPopup);
 		clock.start();
 	}
-	
-	public Icon createImageIcon(String path) {		
+
+	public Icon createImageIcon(String path) {
 		this.getClass().getClassLoader();
-		java.net.URL imgURL = ClassLoader.getSystemResource("icons/"+path);
-	      if (imgURL != null) {
-	         return new ImageIcon(imgURL);
-	      } else {            
-	         System.err.println("Couldn't find file:  --> "+path);
-	         return null;
-	      }
+		java.net.URL imgURL = ClassLoader.getSystemResource("icons/" + path);
+		if (imgURL != null) {
+			return new ImageIcon(imgURL);
+		} else {
+			System.err.println("Couldn't find file:  --> " + path);
+			return null;
+		}
 	}
-	
+
 	public Font applyLabelFont() {
 		return new Font("verdana", Font.BOLD, 12);
 	}
-	
+
 	public Font applyTableFont() {
 		return new Font("verdana", Font.BOLD, 13);
 	}
-	
-	
-	
 
 }

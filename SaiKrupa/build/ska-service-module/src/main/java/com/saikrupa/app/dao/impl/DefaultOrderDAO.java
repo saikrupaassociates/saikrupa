@@ -139,12 +139,16 @@ public class DefaultOrderDAO implements OrderDAO {
 					+ " AND E.ENTRY_NO = D.ENTRY_NO"
 					+ " AND D.ORDER_CODE = O.CODE"
 					+ " AND E.QUANTITY <> D.DELIVERED_QUANTITY";
+			
 		} else if(condition.equals("REPORT_ORDER_BY_CUSTOMER")) {
 			searchQuery = "SELECT O.CODE, O.ORDER_STATUS, O.PAYMENT_STATUS, O.DELIVERY_STATUS, O.CUSTOMER_CODE, O.CREATED_DATE, O.CREATED_BY"
 					+ " FROM COM_ORDER O "
 					+ " WHERE O.CUSTOMER_CODE = ?";
 
-		}		
+		} else if(condition.equals("REPORT_ORDER_CONSOLIDATED")) {
+			searchQuery = "SELECT O.CODE, O.ORDER_STATUS, O.PAYMENT_STATUS, O.DELIVERY_STATUS, O.CUSTOMER_CODE, O.CREATED_DATE, O.CREATED_BY"
+					+ " FROM COM_ORDER O ";
+		}
 		if(searchQuery == null || searchQuery.trim().length() < 1) {
 			searchQuery = "SELECT CODE, ORDER_STATUS, PAYMENT_STATUS, DELIVERY_STATUS, CUSTOMER_CODE, CREATED_DATE "
 			 		+ "FROM COM_ORDER "

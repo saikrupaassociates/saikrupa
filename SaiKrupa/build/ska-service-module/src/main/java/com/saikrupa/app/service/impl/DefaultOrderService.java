@@ -12,7 +12,6 @@ import com.saikrupa.app.dto.ApplicationUserData;
 import com.saikrupa.app.dto.CustomerData;
 import com.saikrupa.app.dto.DeliveryData;
 import com.saikrupa.app.dto.DeliveryStatus;
-import com.saikrupa.app.dto.InventoryEntryData;
 import com.saikrupa.app.dto.OrderData;
 import com.saikrupa.app.dto.OrderEntryData;
 import com.saikrupa.app.service.CustomerService;

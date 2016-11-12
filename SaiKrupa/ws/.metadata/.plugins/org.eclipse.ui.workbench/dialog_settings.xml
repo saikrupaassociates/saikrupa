@@ -17,10 +17,11 @@
 		</list>
 	</section>
 	<section name="NewWizardAction">
-		<item value="org.eclipse.ui.wizards.new.folder" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
+		<item value="org.eclipse.wst.xsd.ui.internal.wizards.NewXSDWizard" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
 		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
-			<item value="org.eclipse.ui.Basic"/>
-			<item value="org.eclipse.jdt.ui.java"/>
+			<item value="org.eclipse.jpt.jaxb"/>
+			<item value="org.eclipse.pde.PDE"/>
+			<item value="org.eclipse.wst.XMLCategory"/>
 		</list>
 	</section>
 	<section name="ImportExportAction">

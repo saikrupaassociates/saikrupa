@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.saikrupa</groupId>
 	<artifactId>saikrupa</artifactId>
 	<version>0.0.1-R1</version>
 	<name>Sai Krupa Associates</name>
-	<url>http://commerce.ska.com</url>
+	<url>http://commerce.ska.in</url>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -38,7 +39,7 @@
 
 		<dependency>
 			<groupId>com.alee</groupId>
-			<artifactId>weblaf-complete-1.29</artifactId>
+			<artifactId>weblaf-complete</artifactId> 
 			<version>1.29</version>
 		</dependency>
 		<dependency>

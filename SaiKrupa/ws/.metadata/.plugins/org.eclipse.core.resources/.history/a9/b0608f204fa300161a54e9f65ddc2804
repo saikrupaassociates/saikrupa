@@ -1,0 +1,10 @@
+package com.saikrupa.app.dao;
+
+import java.util.List;
+
+import com.saikrupa.app.dto.EmployeeData;
+
+public interface EmployeeDAO {
+	public List<EmployeeData> getAllEmployees();
+	public EmployeeData findEmployeeByCode();
+}

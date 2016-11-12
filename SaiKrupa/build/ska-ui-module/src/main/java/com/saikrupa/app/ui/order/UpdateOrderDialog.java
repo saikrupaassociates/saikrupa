@@ -339,6 +339,7 @@ public class UpdateOrderDialog extends BaseAppDialog {
 	}
 
 	private void displayUpdateDeliveryDetailDialog() {
+		lineDetailTable.setSelectedRow(0);
 		int selectedLine = lineDetailTable.getSelectedRow();
 		OrderEntryTableModel entryTableModel = (OrderEntryTableModel) lineDetailTable.getModel();
 		OrderEntryData orderEntry = entryTableModel.getOrderEntryDataList().get(selectedLine);

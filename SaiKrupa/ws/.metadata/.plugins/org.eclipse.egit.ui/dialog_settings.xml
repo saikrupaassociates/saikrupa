@@ -7,10 +7,22 @@
 	<item value="382" key="DIALOG_X_ORIGIN"/>
 	<item value="14" key="DIALOG_Y_ORIGIN"/>
 	<list key="RepositorySelectionPage.UsedUris">
+		<item value="https://github.com/saikrupaassociates/saikrupa"/>
 		<item value="prasun@SimonaHome:E:\GIT_REPOS\repos\ska-dev-01.git"/>
 		<item value="prasun@localhost:E:\GIT_REPOS\repos\ska-dev-01.git"/>
 		<item value="prasun@localhost:/~/ska-dev-01.git"/>
 		<item value="Simona@localhost:/e/GIT_REPOS/repos/ska-dev-01.git"/>
+	</list>
+	<list key="EGit.KnownHosts">
+		<item value="bitbucket.org"/>
+		<item value="git.eclipse.org"/>
+		<item value="github.com"/>
+	</list>
+	<list key="CommitDialog.authorValues">
+		<item value="prasun &lt;prasun.sarangi@gmail.com&gt;"/>
+	</list>
+	<list key="CommitDialog.committerValues">
+		<item value="prasun &lt;prasun.sarangi@gmail.com&gt;"/>
 	</list>
 	<section name="GitImportWizard">
 	</section>
@@ -24,5 +36,16 @@
 			<item value="600"/>
 			<item value="400"/>
 		</list>
+	</section>
+	<section name="org.eclipse.egit.ui.internal.pull.PullResultDialog.dialogBounds">
+		<item value="537" key="DIALOG_X_ORIGIN"/>
+		<item value="246" key="DIALOG_Y_ORIGIN"/>
+	</section>
+	<section name="GitCommitMessageComponent">
+	</section>
+	<section name="org.eclipse.egit.ui.internal.staging.StagingView">
+		<item value="500,500" key="STAGING_SASH_FORM_WEIGHT"/>
+		<item value="false" key="sortItemState"/>
+		<item value="500,500" key="HORIZONTAL_SASH_FORM_WEIGHT"/>
 	</section>
 </section>

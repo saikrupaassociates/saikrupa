@@ -1,0 +1,119 @@
+package com.saikrupa.app.service.report.impl;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.Date;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.saikrupa.app.service.report.ReportService;
+import com.saikrupa.app.service.report.common.ReportPageHeader;
+
+public class DefaultReportService implements ReportService {
+
+	public DefaultReportService() {
+		// TODO Auto-generated constructor stub
+	}
+
+	private void addHeader(PdfWriter writer) {
+		ReportPageHeader header = new ReportPageHeader();
+		writer.setPageEvent(header);
+	}
+
+	private Paragraph createTableHeaderText(String headerText) {
+		return new Paragraph(headerText, FontFactory.getFont(FontFactory.COURIER_BOLD, 14, BaseColor.BLACK));
+	}
+
+	private Paragraph createTableCellText(String cellText) {
+		return new Paragraph(cellText, FontFactory.getFont(FontFactory.COURIER_BOLD, 12, BaseColor.BLACK));
+	}
+
+	private void addPageTableContent(Document document) throws DocumentException {
+		PdfPTable table = new PdfPTable(3);
+		table.setHorizontalAlignment(Element.ALIGN_LEFT);
+		table.getDefaultCell().setBorder(2);
+
+		table.getDefaultCell().setBackgroundColor(BaseColor.DARK_GRAY);
+		PdfPCell header_OrderNo = new PdfPCell(createTableHeaderText("Order Number"));
+		header_OrderNo.setBackgroundColor(BaseColor.GREEN);
+		PdfPCell header_OrderDate = new PdfPCell(createTableHeaderText("Order Date"));
+		header_OrderDate.setBackgroundColor(BaseColor.GREEN);
+		PdfPCell header_OrderBy = new PdfPCell(createTableHeaderText("Ordered By"));
+		header_OrderNo.setBackgroundColor(BaseColor.GREEN);
+		table.addCell(header_OrderNo);
+		table.addCell(header_OrderDate);
+		table.addCell(header_OrderBy);
+
+		for (int i = 0; i < 10; i++) {
+			PdfPCell data_OrderNo = new PdfPCell(createTableCellText("Order100 " + i));
+			PdfPCell data_OrderDate = new PdfPCell(createTableCellText("12/12/20016"));
+			PdfPCell data_OrderedBy = new PdfPCell(createTableCellText("Prasun"));
+			table.addCell(data_OrderNo);
+			table.addCell(data_OrderDate);
+			table.addCell(data_OrderedBy);
+		}
+		document.add(table);
+
+	}
+
+	public Document createBlankDocument(final String reportFileName) {
+		String FILE = "E:/Projects/" + reportFileName + ".pdf";
+		Document document = new Document();
+		try {
+			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(FILE));
+			addHeader(writer);
+			document.open();
+			addMetaData(document);
+			addTitlePage(document);
+			addPageTableContent(document);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return document;
+	}
+
+	private static void addMetaData(Document document) {
+		document.addTitle("Consolidated Order Report");
+	}
+
+	private static void addEmptyLine(Paragraph paragraph, int number) {
+		for (int i = 0; i < number; i++) {
+			paragraph.add(new Paragraph(" "));
+		}
+	}
+
+	private static void addTitlePage(Document document) throws DocumentException {
+		Paragraph preface = new Paragraph();
+		addEmptyLine(preface, 1);
+		Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 14, Font.BOLD);
+		preface.add(new Paragraph("Title of the document", catFont));
+		addEmptyLine(preface, 1);
+		document.add(preface);
+	}
+
+	public void test() {
+		Document pdfDocument = createBlankDocument("ConsolidatedOrderReport");
+		pdfDocument.close();
+		System.out.println("Done !!!");
+
+	}
+
+	public static void main(String[] test) {
+		DefaultReportService service = new DefaultReportService();
+		service.test();
+
+	}
+}

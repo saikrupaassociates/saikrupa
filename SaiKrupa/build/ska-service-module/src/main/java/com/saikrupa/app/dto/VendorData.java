@@ -9,9 +9,15 @@ public class VendorData {
 	private String primaryContactNo;
 	private String secondaryContactNo;
 	
+	private boolean loginDisabled;
+	
 	private List<ContactPerson> contactPersons;
 	
 	private AddressData address;
+	
+	public VendorData() {
+		setLoginDisabled(true);
+	}
 	
 	public String getCode() {
 		return code;
@@ -48,6 +54,14 @@ public class VendorData {
 	}
 	public void setContactPersons(List<ContactPerson> contactPersons) {
 		this.contactPersons = contactPersons;
+	}
+
+	public boolean isLoginDisabled() {
+		return loginDisabled;
+	}
+
+	public void setLoginDisabled(boolean loginDisabled) {
+		this.loginDisabled = loginDisabled;
 	}
 	 
 }

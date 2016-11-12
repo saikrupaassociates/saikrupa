@@ -1,0 +1,13 @@
+package com.saikrupa.app.dto;
+
+import java.util.Date;
+
+public class EmployeeData extends VendorData {
+	
+	private Date joiningDate;
+	private double effectiveSalary;
+
+	public EmployeeData() {
+		setLoginDisabled(false);
+	}
+}
