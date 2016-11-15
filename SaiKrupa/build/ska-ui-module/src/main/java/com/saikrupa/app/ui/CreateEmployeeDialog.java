@@ -32,7 +32,7 @@ import com.saikrupa.app.ui.models.EmployeeTableModel;
 public class CreateEmployeeDialog extends BaseAppDialog {
 
 	/**
-	 * 
+	 * Admin user has the access to perform Employee Specific operation 
 	 */
 	private static final long serialVersionUID = 1L;
 
