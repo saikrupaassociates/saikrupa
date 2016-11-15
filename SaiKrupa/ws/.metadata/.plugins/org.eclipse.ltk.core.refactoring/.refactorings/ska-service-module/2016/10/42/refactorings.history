@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Move element &apos;TestJson.java&apos; to &apos;ska-ui-module/src/main/java/com.saikrupa.app.ui.test&apos;&#x0D;&#x0A;- Original project: &apos;ska-service-module&apos;&#x0D;&#x0A;- Destination element: &apos;ska-ui-module/src/main/java/com.saikrupa.app.ui.test&apos;&#x0D;&#x0A;- Original element: &apos;com.saikrupa.app.util.TestJson.java&apos;&#x0D;&#x0A;- Update references to refactored element" description="Move compilation unit" destination="=ska-ui-module/src\/main\/java&lt;com.saikrupa.app.ui.test" element1="/src\/main\/java&lt;com.saikrupa.app.util{TestJson.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" patterns="*" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1476206344422" units="1" version="1.0"/>
-</session>

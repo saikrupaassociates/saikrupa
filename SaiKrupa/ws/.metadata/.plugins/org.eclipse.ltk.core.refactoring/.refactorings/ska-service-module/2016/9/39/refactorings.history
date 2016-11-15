@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy element &apos;InventoryData.java&apos; to &apos;ska-service-module/src/main/java/com.saikrupa.app.dto&apos;&#x0D;&#x0A;- Original project: &apos;ska-service-module&apos;&#x0D;&#x0A;- Destination element: &apos;ska-service-module/src/main/java/com.saikrupa.app.dto&apos;&#x0D;&#x0A;- Original element: &apos;com.saikrupa.app.dto.InventoryData.java&apos;" description="Copy compilation unit" destination="/src\/main\/java&lt;com.saikrupa.app.dto" element1="/src\/main\/java&lt;com.saikrupa.app.dto{InventoryData.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1474375723235" units="1" version="1.0"/>
-</session>

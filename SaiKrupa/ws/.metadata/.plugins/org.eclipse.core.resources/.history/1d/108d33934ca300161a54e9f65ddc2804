@@ -1,5 +1,0 @@
-package com.saikrupa.app.service;
-
-public interface EmployeeService {
-	public Employee createEmployee(Employee employee);
-}

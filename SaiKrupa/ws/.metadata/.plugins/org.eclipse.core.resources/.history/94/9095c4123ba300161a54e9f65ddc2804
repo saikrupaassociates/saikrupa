@@ -1,8 +1,0 @@
-package com.saikrupa.app.service.report;
-
-import com.itextpdf.text.Document;
-
-public interface ReportService {
-	public Document createBlankDocument(final String reportFileName);
-	public void saveReport(final String reportName) {
-}
