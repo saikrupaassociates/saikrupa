@@ -22,7 +22,7 @@ import com.alee.managers.notification.WebNotification;
 public class BaseAppDialog extends WebDialog {
 
 	/**
-	 * Base Class
+	 * Base Class ... SKA SKA
 	 */
 	private static final long serialVersionUID = 1L;
 
