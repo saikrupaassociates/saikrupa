@@ -131,15 +131,16 @@ public class DefaultOrderDAO implements OrderDAO {
 		if (condition.equals("PENDING") && PaymentStatus.valueOf(condition) == PaymentStatus.PENDING) {
 			whereCluse = " PAYMENT_STATUS = 1";
 		} else if(condition.equals("SHIPPING") && DeliveryStatus.valueOf(condition) == DeliveryStatus.SHIPPING) {
-			whereCluse = " DELIVERY_STATUS = 1";
+			whereCluse = " DELIVERY_STATUS = 1";					
+		} else if(condition.equals("DELIVERED_PENDING_PAYMENT")) {
+			whereCluse = " PAYMENT_STATUS = 1 AND DELIVERY_STATUS = 0";
 		} else if(condition.equals("DELIVERY_QUANTITY_MISMATCH")) {
 			searchQuery = "SELECT O.CODE, O.ORDER_STATUS, O.PAYMENT_STATUS, O.DELIVERY_STATUS, O.CUSTOMER_CODE, O.CREATED_DATE"
 					+ " FROM COM_ORDER O, COM_ORDER_ENTRY E, COM_ORDER_DELIVERY D"
 					+ " WHERE O.CODE = E.ORDER_CODE"
 					+ " AND E.ENTRY_NO = D.ENTRY_NO"
 					+ " AND D.ORDER_CODE = O.CODE"
-					+ " AND E.QUANTITY <> D.DELIVERED_QUANTITY";
-			
+					+ " AND E.QUANTITY <> D.DELIVERED_QUANTITY";			
 		} else if(condition.equals("REPORT_ORDER_BY_CUSTOMER")) {
 			searchQuery = "SELECT O.CODE, O.ORDER_STATUS, O.PAYMENT_STATUS, O.DELIVERY_STATUS, O.CUSTOMER_CODE, O.CREATED_DATE, O.CREATED_BY"
 					+ " FROM COM_ORDER O "

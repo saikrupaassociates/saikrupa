@@ -47,7 +47,6 @@ public class CreateEmployeeDialog extends BaseAppDialog {
 		setResizable(false);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void buildGUI(final SKAMainApp owner) {
 		WebPanel formPanel = new WebPanel();
 		formPanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
@@ -105,7 +104,7 @@ public class CreateEmployeeDialog extends BaseAppDialog {
 		formPanel.add(dojField);
 
 		WebLabel l4 = new WebLabel("ID Proof Document : ", SwingConstants.RIGHT);
-		final WebTextField idProofDocumentField = new WebTextField(15);
+		//final WebTextField idProofDocumentField = new WebTextField(15);
 		l4.setFont(applyLabelFont());
 
 //		c.gridx = 0;
@@ -120,8 +119,8 @@ public class CreateEmployeeDialog extends BaseAppDialog {
 //		layout.setConstraints(idProofDocumentField, c);
 //		formPanel.add(idProofDocumentField);
 
-		WebLabel l5 = new WebLabel("Address Proof Document : ", SwingConstants.RIGHT);
-		final WebTextField addressProofField = new WebTextField(15);
+//		WebLabel l5 = new WebLabel("Address Proof Document : ", SwingConstants.RIGHT);
+		//final WebTextField addressProofField = new WebTextField(15);
 
 //		c.gridx = 0;
 //		c.gridy = 4;

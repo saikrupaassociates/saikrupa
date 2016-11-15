@@ -8,7 +8,9 @@ public class EmployeeData extends VendorData {
 	private Date joiningDate;
 	private double effectiveSalary;
 	private List<EmployeeSalaryData> revisions;
-	private boolean active;
+	private boolean active;	
+	private ApplicationRole role;
+	
 
 	public EmployeeData() {
 		setLoginDisabled(false);
@@ -44,5 +46,13 @@ public class EmployeeData extends VendorData {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public ApplicationRole getRole() {
+		return role;
+	}
+
+	public void setRole(ApplicationRole role) {
+		this.role = role;
 	}
 }

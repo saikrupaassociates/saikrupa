@@ -2,6 +2,7 @@ package com.saikrupa.app.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -15,7 +16,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -71,7 +74,9 @@ import com.saikrupa.app.service.impl.DefaultVendorService;
 import com.saikrupa.app.service.report.ReportService;
 import com.saikrupa.app.service.report.impl.ConsolidatedOrderReportService;
 import com.saikrupa.app.service.report.impl.CustomerOrderReportService;
+import com.saikrupa.app.service.report.impl.DeliveredPendingPaymentOrderReportService;
 import com.saikrupa.app.service.report.impl.PendingDeliveryOrderReportService;
+import com.saikrupa.app.service.report.impl.PendingPaymentOrderReportService;
 import com.saikrupa.app.session.ApplicationSession;
 import com.saikrupa.app.ui.models.EmployeeTableModel;
 import com.saikrupa.app.ui.models.ExpenseTableModel;
@@ -96,16 +101,16 @@ public class SKAMainApp extends WebFrame {
 	private WebTable orderContentTable;
 	private WebTable productContentTable;
 	private WebTable employeeContentTable;
-	
 	private WebButton exportReportButton;
+	
+	private WebMenu profileMenu;
 
 	public SKAMainApp() {
 		super();
 		init();
 	}
-	
+
 	private void init() {
-		
 		if (!isDBConnectionOK()) {
 			WebOptionPane.showMessageDialog(this, "DB Connection not available");
 			System.exit(0);
@@ -148,7 +153,9 @@ public class SKAMainApp extends WebFrame {
 		WebLabel l1 = new WebLabel("User ID : ", SwingConstants.RIGHT);
 		l1.setFont(getLabelFont());
 		final WebTextField userNameText = new WebTextField(15);
-		userNameText.setText("000003");
+		userNameText.setInputPrompt("Employee ID");
+		userNameText.setInputPromptFont(userNameText.getFont().deriveFont(Font.ITALIC));
+		
 
 		c.gridx = 0;
 		c.gridy = 0;
@@ -166,7 +173,8 @@ public class SKAMainApp extends WebFrame {
 		WebLabel l2 = new WebLabel("Password : ", SwingConstants.RIGHT);
 		l2.setFont(getLabelFont());
 		final WebPasswordField passwordText = new WebPasswordField(15);
-		passwordText.setText("admin");
+		passwordText.setInputPrompt("Enter password");
+		passwordText.setInputPromptFont(passwordText.getFont().deriveFont(Font.ITALIC));
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -184,7 +192,7 @@ public class SKAMainApp extends WebFrame {
 		WebButton loginButton = new WebButton();
 		loginButton.setIcon(createImageIcon("login-button.png"));
 		loginButton.setToolTipText("Login");
-		
+
 		loginButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -214,22 +222,26 @@ public class SKAMainApp extends WebFrame {
 		} else {
 			ApplicationUserDAO userDao = new DefaultApplicationUserDAO();
 			ApplicationUserData userData = userDao.findUserByCode(userName);
-			if(userData == null) {
-				WebOptionPane.showMessageDialog(this, "Login Failed");
+			if (userData == null) {
+				WebOptionPane.showMessageDialog(this, "User Id does not exists");
 			} else {
-				ApplicationSession session = ApplicationSession.getSession();			
-				session.setProperty("CURRENT_USER", userData);
-				/**
-				 * check for password - to do
-				 */
-				getContentPane().remove(panel);
-				setupMenus();
-				decorateSouthPanel();
-				revalidate();				
+				if (!loginValid(new String(password), new String(userData.getPassword()))) {
+					WebOptionPane.showMessageDialog(this, "Invalid login Credentials. Please try again");
+				} else {
+					ApplicationSession session = ApplicationSession.getSession();
+					session.setCurrentUser(userData);
+					getContentPane().remove(panel);
+					setupMenus();
+					decorateSouthPanel();
+					revalidate();
+				}
 			}
 		}
 	}
-	 
+
+	private boolean loginValid(String value1, String value2) {
+		return value1.equals(value2);
+	}
 
 	public ImageIcon createImageIcon(String path) {
 		this.getClass().getClassLoader();
@@ -266,12 +278,13 @@ public class SKAMainApp extends WebFrame {
 		}
 
 	}
-	
+
 	private SDMenuBar menubar;
 
 	private void setupMenus() {
-		menubar = new SDMenuBar();
+		ApplicationUserData loggedOnUser = ApplicationSession.getSession().getCurrentUser();
 
+		menubar = new SDMenuBar();
 		WebMenu optionMenu = new WebMenu("Operations");
 		optionMenu.setFont(getMenuFont());
 		optionMenu.setToolTipText("Available Operations");
@@ -291,7 +304,7 @@ public class SKAMainApp extends WebFrame {
 		final WebMenuItem vendorMenuItem = new WebMenuItem("Vendor / Supplier");
 		vendorMenuItem.setFont(getMenuFont());
 		vendorMenuItem.setToolTipText("manage Vendor or Supplier");
-		
+
 		final WebMenuItem employeeMenuItem = new WebMenuItem("Employee");
 		employeeMenuItem.setFont(getMenuFont());
 		employeeMenuItem.setToolTipText("manage Employee");
@@ -311,15 +324,29 @@ public class SKAMainApp extends WebFrame {
 		final WebMenuItem exitMenuItem = new WebMenuItem("Exit...");
 		exitMenuItem.setFont(getMenuFont());
 		exitMenuItem.setToolTipText("Exit from App...");
+		
+		profileMenu = new WebMenu(loggedOnUser.getName());
+		profileMenu.setFont(getMenuFont());
+		
+		final WebMenuItem changePasswordMenuItem = new WebMenuItem("Change Password...");
+		changePasswordMenuItem.setFont(getMenuFont());
+		changePasswordMenuItem.setToolTipText("Change Password");
+		changePasswordMenuItem.setActionCommand("CHANGE_PASSWORD");
+		profileMenu.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+		profileMenu.add(changePasswordMenuItem);
 
 		manageMenu.add(vendorMenuItem);
 		manageMenu.addSeparator();
-		
-		manageMenu.add(employeeMenuItem);
-		manageMenu.addSeparator();
 
-		manageMenu.add(investMenuItem);
-		manageMenu.addSeparator();
+		if (loggedOnUser.isAdmin()) {
+			manageMenu.add(employeeMenuItem);
+			manageMenu.addSeparator();
+		}
+
+		if (loggedOnUser.isAdmin()) {
+			manageMenu.add(investMenuItem);
+			manageMenu.addSeparator();
+		}
 
 		manageMenu.add(productMenuItem);
 		manageMenu.addSeparator();
@@ -348,15 +375,18 @@ public class SKAMainApp extends WebFrame {
 		final WebMenuItem orderPendingDeliveryItem = new WebMenuItem("Pending Delivery");
 		orderPendingDeliveryItem.setFont(getMenuFont());
 		orderPendingDeliveryItem.setToolTipText("Find Orders with Pending Delivery");
-		
+
 		final WebMenuItem orderByCustomerItem = new WebMenuItem("Order By Customer");
 		orderByCustomerItem.setFont(getMenuFont());
 		orderByCustomerItem.setToolTipText("Find Orders by Customer");
-		
+
 		final WebMenuItem consolidatedOrderItem = new WebMenuItem("Consolidated - All Orders");
 		consolidatedOrderItem.setFont(getMenuFont());
 		consolidatedOrderItem.setToolTipText("All Orders placed");
 
+		final WebMenuItem deliveredPendingPaymentItem = new WebMenuItem("Delivered - Pending Payment");
+		deliveredPendingPaymentItem.setFont(getMenuFont());
+		deliveredPendingPaymentItem.setToolTipText("Delivery Completed but payment is pending");
 
 		final WebMenuItem orderDeliveryConflictItem = new WebMenuItem("Delivery Quantity Discrepency");
 		orderDeliveryConflictItem.setFont(getMenuFont());
@@ -364,13 +394,18 @@ public class SKAMainApp extends WebFrame {
 
 		buildReportItem.add(orderPendingPaymentItem);
 		buildReportItem.add(orderPendingDeliveryItem);
-		buildReportItem.add(orderByCustomerItem);		
+		buildReportItem.add(orderByCustomerItem);
+		buildReportItem.add(deliveredPendingPaymentItem);
+
 		buildReportItem.add(consolidatedOrderItem);
 		buildReportItem.add(orderDeliveryConflictItem);
-		reportMenu.add(buildReportItem);
-
+		reportMenu.add(buildReportItem);		
+				
 		menubar.add(optionMenu);
-		menubar.add(reportMenu);
+		menubar.add(reportMenu);		
+		menubar.add(Box.createHorizontalGlue());
+		menubar.add(profileMenu);
+		menubar.add(profileMenu);	
 		setJMenuBar(menubar);
 
 		expenseMenuItem.setActionCommand("MANAGE_EXPENSE");
@@ -386,8 +421,8 @@ public class SKAMainApp extends WebFrame {
 		orderDeliveryConflictItem.setActionCommand("REPORT_DELIVERY_QUANTITY_MISMATCH");
 		orderByCustomerItem.setActionCommand("REPORT_ORDER_BY_CUSTOMER");
 		consolidatedOrderItem.setActionCommand("REPORT_ORDER_CONSOLIDATED");
+		deliveredPendingPaymentItem.setActionCommand("DELIVERED_PENDING_PAYMENT");
 
-		
 		expenseMenuItem.addActionListener(actionListener());
 		exitMenuItem.addActionListener(actionListener());
 		vendorMenuItem.addActionListener(actionListener());
@@ -402,8 +437,10 @@ public class SKAMainApp extends WebFrame {
 		orderDeliveryConflictItem.addActionListener(actionListener());
 		orderByCustomerItem.addActionListener(actionListener());
 		consolidatedOrderItem.addActionListener(actionListener());
+		deliveredPendingPaymentItem.addActionListener(actionListener());
+		changePasswordMenuItem.addActionListener(actionListener());
 	}
-	
+
 	private ActionListener actionListener() {
 		ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -426,69 +463,87 @@ public class SKAMainApp extends WebFrame {
 					buildOrderReport(bundle, DeliveryStatus.SHIPPING.toString(), null, e);
 				} else if (e.getActionCommand().equalsIgnoreCase("REPORT_ORDER_PENDING_PAYMENT")) {
 					buildOrderReport(bundle, PaymentStatus.PENDING.toString(), null, e);
+				} else if (e.getActionCommand().equalsIgnoreCase("DELIVERED_PENDING_PAYMENT")) {
+					buildOrderReport(bundle, "DELIVERED_PENDING_PAYMENT", null, e);
 				} else if (e.getActionCommand().equalsIgnoreCase("REPORT_ORDER_CONSOLIDATED")) {
-						buildOrderReport(bundle, e.getActionCommand(), null, e);
+					buildOrderReport(bundle, e.getActionCommand(), null, e);
 				} else if (e.getActionCommand().equalsIgnoreCase("REPORT_ORDER_BY_CUSTOMER")) {
 					DisplayCustomerListDialog dialog = new DisplayCustomerListDialog(SKAMainApp.this);
 					dialog.setVisible(true);
 					CustomerData customer = dialog.performSelectionOperation();
-					if(customer != null) {
+					if (customer != null) {
 						Integer[] params = new Integer[1];
 						params[0] = Integer.valueOf(customer.getCode());
 						buildOrderReport(bundle, "REPORT_ORDER_BY_CUSTOMER", params, e);
 					}
-					
+
 				} else if (e.getActionCommand().equalsIgnoreCase("REPORT_DELIVERY_QUANTITY_MISMATCH")) {
-					buildOrderReport(bundle, "DELIVERY_QUANTITY_MISMATCH", null, e);					
-				} else if(e.getActionCommand().equals("LOG_OFF")) {
+					buildOrderReport(bundle, "DELIVERY_QUANTITY_MISMATCH", null, e);
+				} else if (e.getActionCommand().equals("LOG_OFF")) {
 					processLogoff();
+				} else if (e.getActionCommand().equals("CHANGE_PASSWORD")) {
+					processChangePassword();
 				}
 			}
-		};	
+		};
 		return listener;
 	}
-	
+
+	private void processChangePassword() {
+		ChangePasswordDialog d = new ChangePasswordDialog(this);
+		d.setVisible(true);
+	}
+
 	private void processLogoff() {
 		getContentPane().removeAll();
-		menubar.removeAll();		
+		menubar.removeAll();
 		showLogin();
 		revalidate();
 	}
-	
+
 	private void exportReport(String actionCommand) {
 		OrderTableModel model = (OrderTableModel) orderContentTable.getModel();
-		WebFileChooser chooser = new WebFileChooser("/");
+		WebFileChooser chooser = new WebFileChooser(System.getProperty("user.dir"));
+		chooser.setMultiSelectionEnabled(false);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF Files", "pdf", "PDF");
 		chooser.setFileFilter(filter);
 		chooser.setDialogTitle("Save Report As...");
 		int selection = chooser.showSaveDialog(this);
-		if(selection == WebFileChooser.APPROVE_OPTION) {
-			String dest = chooser.getSelectedFile().getAbsolutePath();
+		if (selection == WebFileChooser.APPROVE_OPTION) {
 			ReportService reportService = null;
-			if("REPORT_ORDER_PENDING_PAYMENT".equalsIgnoreCase(actionCommand)) {
-				reportService = new CustomerOrderReportService(model.getOrderDataList());
-			} else if("REPORT_ORDER_PENDING_DELIVERY".equalsIgnoreCase(actionCommand)) {
+			if ("REPORT_ORDER_PENDING_PAYMENT".equalsIgnoreCase(actionCommand)) {
+				reportService = new PendingPaymentOrderReportService(model.getOrderDataList());
+			} else if ("REPORT_ORDER_PENDING_DELIVERY".equalsIgnoreCase(actionCommand)) {
+				chooser.setSelectedFile(new File("OrderReport_pendingDelivery.pdf"));
+
 				reportService = new PendingDeliveryOrderReportService(model.getOrderDataList());
-			} else if("REPORT_ORDER_BY_CUSTOMER".equalsIgnoreCase(actionCommand)) {
+			} else if ("REPORT_ORDER_BY_CUSTOMER".equalsIgnoreCase(actionCommand)) {
+				String name = (String) model.getOrderDataList().get(0).getCustomer().getName();
+				chooser.setSelectedFile(new File("OrderReport_ByCustomer_" + name + ".pdf"));
 				reportService = new CustomerOrderReportService(model.getOrderDataList());
-			} else if("REPORT_ORDER_CONSOLIDATED".equalsIgnoreCase(actionCommand)) {
+			} else if ("REPORT_ORDER_CONSOLIDATED".equalsIgnoreCase(actionCommand)) {
+				chooser.setSelectedFile(new File("OrderReport_Consolidated.pdf"));
 				reportService = new ConsolidatedOrderReportService(model.getOrderDataList());
-			}			
-			reportService.saveReport(dest);
+			} else if ("DELIVERED_PENDING_PAYMENT".equalsIgnoreCase(actionCommand)) {
+				chooser.setSelectedFile(new File("OrderReport_Delivered_PendingPayment.pdf"));
+				reportService = new DeliveredPendingPaymentOrderReportService(model.getOrderDataList());
+			}
+			reportService.saveReport(chooser.getSelectedFile().getAbsolutePath());
 			showSuccessNotification();
 		}
 	}
 
-	private void buildOrderReport(ApplicationResourceBundle bundle, final String status, Object[] params, ActionEvent e) {
+	private void buildOrderReport(ApplicationResourceBundle bundle, final String status, Object[] params,
+			ActionEvent e) {
 		getContentPane().removeAll();
 		WebPanel basePanel = new WebPanel(true);
 		exportReportButton = new WebButton("Export Report");
 		exportReportButton.setFont(getLabelFont());
 		exportReportButton.setActionCommand(e.getActionCommand());
-		basePanel.setLayout(new FlowLayout(FlowLayout.LEADING));		
+		basePanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		WebPanel contentPanel = new WebPanel(true);
 		contentPanel.setLayout(new BorderLayout());
-		
+
 		exportReportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportReport(exportReportButton.getActionCommand());
@@ -500,10 +555,10 @@ public class SKAMainApp extends WebFrame {
 		orderContentTable = new WebTable(orderTableModel);
 
 		contentPanel.add(new WebScrollPane(orderContentTable));
-		if(orderTableModel != null && !orderTableModel.getOrderDataList().isEmpty()) {
+		if (orderTableModel != null && !orderTableModel.getOrderDataList().isEmpty()) {
 			basePanel.add(exportReportButton);
 		}
-		
+
 		orderContentTable.getTableHeader().setFont(new Font("verdana", Font.BOLD, 14));
 		orderContentTable.setRowHeight(35);
 		orderContentTable.setFont(new Font("verdana", Font.PLAIN, 14));
@@ -590,7 +645,7 @@ public class SKAMainApp extends WebFrame {
 		dialog.setVisible(true);
 
 	}
-	
+
 	private void displayEmployeeUpdateDialog(EmployeeData data) {
 		UpdateEmployeeDialog dialog = new UpdateEmployeeDialog(this, data);
 		dialog.setVisible(true);
@@ -619,6 +674,16 @@ public class SKAMainApp extends WebFrame {
 		contentPanel.add(new WebScrollPane(productContentTable));
 
 		productContentTable.getTableHeader().setFont(new Font("verdana", Font.BOLD, 14));
+
+		productContentTable.getColumnModel().getColumn(1).setMinWidth(230);
+		productContentTable.getColumnModel().getColumn(1).setMaxWidth(230);
+
+		productContentTable.getColumnModel().getColumn(5).setMinWidth(220);
+		productContentTable.getColumnModel().getColumn(5).setMaxWidth(220);
+
+		productContentTable.getColumnModel().getColumn(6).setMinWidth(220);
+		productContentTable.getColumnModel().getColumn(6).setMaxWidth(220);
+
 		productContentTable.setRowHeight(35);
 		productContentTable.setFont(new Font("verdana", Font.PLAIN, 14));
 
@@ -670,9 +735,7 @@ public class SKAMainApp extends WebFrame {
 		investorContentTable.getTableHeader().setFont(new Font("verdana", Font.BOLD, 14));
 		investorContentTable.setRowHeight(35);
 		investorContentTable.setFont(new Font("verdana", Font.PLAIN, 14));
-
 		MouseListener mouseListener = new MouseAdapter() {
-
 			public void mouseClicked(MouseEvent e) {
 				if (e.getSource() == investorContentTable) {
 					if (e.getClickCount() > 1) {
@@ -682,7 +745,6 @@ public class SKAMainApp extends WebFrame {
 						showInvestments(data);
 					}
 				}
-
 			}
 		};
 		investorContentTable.addMouseListener(mouseListener);
@@ -704,17 +766,23 @@ public class SKAMainApp extends WebFrame {
 		ApplicationUserData userData = (ApplicationUserData) session.getProperty("CURRENT_USER");
 		if (userData != null) {
 			WebLabel user = new WebLabel(userData.getName());
+			//WebButton changePasswordButton = new WebButton("Change Password");
+
 			user.setFont(getLabelFont());
 			southPanel.add(new WebLabel("Logged On : "));
 			southPanel.add(user);
-			
+
 			WebButton logoffButton = new WebButton();
 			logoffButton.setIcon(createImageIcon("button_logoff.png"));
 			southPanel.add(logoffButton);
 			logoffButton.setActionCommand("LOG_OFF");
 			logoffButton.setToolTipText("Log off");
 			logoffButton.addActionListener(actionListener());
-			
+
+//			southPanel.add(changePasswordButton);
+//			changePasswordButton.setActionCommand("CHANGE_PASSWORD");
+//			changePasswordButton.addActionListener(actionListener());
+
 		}
 		getContentPane().add(southPanel, BorderLayout.SOUTH);
 	}
@@ -729,12 +797,11 @@ public class SKAMainApp extends WebFrame {
 		CreateVendorDialog vendorDialog = new CreateVendorDialog(owner);
 		vendorDialog.setVisible(true);
 	}
-	
+
 	private void displayCreateEmployeeDialog(SKAMainApp owner) {
 		CreateEmployeeDialog dialog = new CreateEmployeeDialog(owner);
 		dialog.setVisible(true);
 	}
-	
 
 	private void displayCreateInvestmentDialog(SKAMainApp owner) {
 		ManageInvestmentDialog dialog = new ManageInvestmentDialog(owner);
@@ -746,7 +813,7 @@ public class SKAMainApp extends WebFrame {
 		ManageExpenseDialog expenseDialog = new ManageExpenseDialog(owner);
 		expenseDialog.setVisible(true);
 	}
-	
+
 	private void displayEmployeeScreen(ApplicationResourceBundle bundle) {
 		getContentPane().removeAll();
 		final WebButton createVendorButton = new WebButton("Create Employee");
@@ -755,7 +822,7 @@ public class SKAMainApp extends WebFrame {
 				displayCreateEmployeeDialog(SKAMainApp.this);
 			}
 		});
-		
+
 		WebPanel basePanel = new WebPanel(true);
 		basePanel.setLayout(new FlowLayout(FlowLayout.LEADING));
 		basePanel.add(createVendorButton);
@@ -770,7 +837,7 @@ public class SKAMainApp extends WebFrame {
 		employeeContentTable.getTableHeader().setFont(new Font("verdana", Font.BOLD, 14));
 		employeeContentTable.setRowHeight(35);
 		employeeContentTable.setFont(new Font("verdana", Font.PLAIN, 14));
-		
+
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getSource() == employeeContentTable) {
@@ -849,12 +916,21 @@ public class SKAMainApp extends WebFrame {
 
 		expenseContentTable = new WebTable(new ExpenseTableModel(expenseDAO.findAllExpenses()));
 		contentPanel.add(new WebScrollPane(expenseContentTable));
-		// expenseContentTable.getColumnModel().getColumn(7).setCellRenderer(new
-		// ExpenseTableRenderer());
-
 		expenseContentTable.getTableHeader().setFont(new Font("verdana", Font.BOLD, 14));
 		expenseContentTable.setRowHeight(35);
 		expenseContentTable.setFont(new Font("verdana", Font.PLAIN, 14));
+
+		expenseContentTable.getColumnModel().getColumn(0).setMaxWidth(110);
+		expenseContentTable.getColumnModel().getColumn(0).setMinWidth(110);
+
+		expenseContentTable.getColumnModel().getColumn(1).setMaxWidth(370);
+		expenseContentTable.getColumnModel().getColumn(1).setMinWidth(370);
+
+		expenseContentTable.getColumnModel().getColumn(2).setMaxWidth(90);
+		expenseContentTable.getColumnModel().getColumn(2).setMinWidth(90);
+
+		expenseContentTable.getColumnModel().getColumn(3).setMaxWidth(140);
+		expenseContentTable.getColumnModel().getColumn(3).setMinWidth(140);
 
 		MouseListener mouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -956,7 +1032,7 @@ public class SKAMainApp extends WebFrame {
 	public void setProductContentTable(WebTable productContentTable) {
 		this.productContentTable = productContentTable;
 	}
-	
+
 	public WebTable getEmployeeContentTable() {
 		return employeeContentTable;
 	}

@@ -1,6 +1,8 @@
 com\saikrupa\app\dao\DefaultPaymentModeDAO.class
 com\saikrupa\app\service\report\component\ReportTableHeaderCell.class
+com\saikrupa\app\service\report\impl\PendingPaymentOrderReportService.class
 com\saikrupa\app\util\DateUtil.class
+com\saikrupa\app\security\SecurityUtil.class
 com\saikrupa\app\service\impl\DefaultCustomerService.class
 com\saikrupa\app\dto\DeliveryStatus.class
 com\saikrupa\app\service\impl\DefaultProductPriceService.class
@@ -41,11 +43,13 @@ com\saikrupa\app\dto\InvestorData.class
 com\saikrupa\app\dto\VendorData.class
 com\saikrupa\app\service\impl\DefaultVendorService.class
 com\saikrupa\app\dto\DeliveryData.class
+com\saikrupa\app\service\report\impl\DeliveredPendingPaymentOrderReportService.class
 com\saikrupa\app\session\ApplicationSession.class
 com\saikrupa\app\service\report\impl\ConsolidatedOrderReportService.class
 com\saikrupa\app\dto\ExpenseTypeData.class
 com\saikrupa\app\util\OrderUtil$1.class
 com\saikrupa\app\dto\PaymentTypeData.class
+com\saikrupa\app\dto\ApplicationRole.class
 com\saikrupa\app\dto\InventoryEntryData.class
 com\saikrupa\app\dao\OrderDAO.class
 com\saikrupa\app\service\ContactPersonService.class

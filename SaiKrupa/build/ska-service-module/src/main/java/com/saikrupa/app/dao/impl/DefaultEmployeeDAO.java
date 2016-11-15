@@ -32,7 +32,7 @@ public class DefaultEmployeeDAO implements EmployeeDAO {
 				data.setPrimaryContactNo(rs.getString(3));
 				data.setSecondaryContactNo(rs.getString(4));
 				data.setActive((rs.getInt(5) == 1) ? true : false);
-				data.setJoiningDate((java.util.Date)rs.getDate(6));
+				data.setJoiningDate((java.util.Date)rs.getTimestamp(6));
 				data.setRevisions(findRevisionsByEmployee(data));
 				employees.add(data);
 			}
@@ -59,10 +59,8 @@ public class DefaultEmployeeDAO implements EmployeeDAO {
 				data.setPrimaryContactNo(rs.getString(3));
 				data.setSecondaryContactNo(rs.getString(4));
 				data.setActive((rs.getInt(5) == 1) ? true : false);
-				data.setJoiningDate(rs.getDate(6));
-				System.out.println("***********************"+data.getCode());
-				data.setRevisions(findRevisionsByEmployee(data));
-				System.out.println("***********************"+data.getCode());
+				data.setJoiningDate(rs.getTimestamp(6));				
+				data.setRevisions(findRevisionsByEmployee(data));				
 			}
 		} catch(Exception e){
 			e.printStackTrace();
@@ -82,8 +80,8 @@ public class DefaultEmployeeDAO implements EmployeeDAO {
 			while(rs.next()) {
 				EmployeeSalaryData data = new EmployeeSalaryData();
 				data.setCode(rs.getString(1));					
-				data.setEffectiveFrom(rs.getDate(2));
-				data.setEffectiveTill(rs.getDate(3));
+				data.setEffectiveFrom(rs.getTimestamp(2));
+				data.setEffectiveTill(rs.getTimestamp(3));
 				data.setSalary(rs.getDouble(4));
 				data.setCurrentRevision((rs.getInt(5) == 1) ? true : false);
 				data.setEmployee(employee);

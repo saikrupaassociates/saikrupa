@@ -6,6 +6,7 @@ public class InventoryData {
 	
 	private ProductData product;
 	private Date lastUpdatedDate;
+	private EmployeeData lastUpdatedBy;
 	
 	private Double totalAvailableQuantity;
 	private Double totalReservedQuantity;
@@ -120,6 +121,16 @@ public class InventoryData {
 
 	public void setTotalDamagedQuantity(Double totalDamagedQuantity) {
 		this.totalDamagedQuantity = totalDamagedQuantity;
+	}
+
+
+	public EmployeeData getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+
+	public void setLastUpdatedBy(EmployeeData lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
 	}
 
 }

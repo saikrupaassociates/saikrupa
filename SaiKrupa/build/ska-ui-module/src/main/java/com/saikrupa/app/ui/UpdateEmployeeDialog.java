@@ -25,10 +25,12 @@ import com.alee.laf.button.WebButton;
 import com.alee.laf.filechooser.WebFileChooser;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.list.WebList;
+import com.alee.laf.optionpane.WebOptionPane;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebDialog;
 import com.alee.laf.text.WebTextField;
 import com.saikrupa.app.dao.impl.DefaultEmployeeDAO;
+import com.saikrupa.app.dto.ApplicationRole;
 import com.saikrupa.app.dto.EmployeeData;
 import com.saikrupa.app.service.EmployeeService;
 import com.saikrupa.app.service.impl.DefaultEmployeeService;
@@ -190,10 +192,15 @@ public class UpdateEmployeeDialog extends BaseAppDialog {
 		createEmployeeButton.setFont(applyLabelFont());
 		createEmployeeButton.setActionCommand("UPDATE_EMPLOYEE");
 		
+		WebButton addRoleButton = new WebButton("Set Role");		
+		addRoleButton.setFont(applyLabelFont());
+		addRoleButton.setActionCommand("SET_ROLE");
+		
 		WebButton addRevisionButton = new WebButton("Salary Revisions");
 		addRevisionButton.setFont(applyLabelFont());
 		addRevisionButton.setActionCommand("REVISIONS");
 		
+		buttonPanel.add(addRoleButton);
 		buttonPanel.add(createEmployeeButton);
 		buttonPanel.add(addRevisionButton);
 
@@ -265,6 +272,17 @@ public class UpdateEmployeeDialog extends BaseAppDialog {
 					}
 				} else if(e.getActionCommand().equalsIgnoreCase("REVISIONS")) {					
 					showRevisionDialog();
+				} else if(e.getActionCommand().equalsIgnoreCase("SET_ROLE")) {					
+					ApplicationRole[] roles = { ApplicationRole.ADMIN, ApplicationRole.EMPLOYEE };
+					ApplicationRole selected = (ApplicationRole) WebOptionPane.showInputDialog(UpdateEmployeeDialog.this,
+							"Role", "Select Role", WebOptionPane.QUESTION_MESSAGE, null,
+							roles, null);
+
+					if (selected != null) {
+						getCurrentEmployee().setRole(selected);
+						
+					}
+
 				}
 			}
 		};
@@ -272,6 +290,7 @@ public class UpdateEmployeeDialog extends BaseAppDialog {
 		uploadIDButton.addActionListener(listener);
 		uploadProofButton.addActionListener(listener);
 		addRevisionButton.addActionListener(listener);
+		addRoleButton.addActionListener(listener);
 		
 		getContentPane().add(new GroupPanel(formPanel), BorderLayout.CENTER);
 		getContentPane().add(buttonPanel , BorderLayout.SOUTH);

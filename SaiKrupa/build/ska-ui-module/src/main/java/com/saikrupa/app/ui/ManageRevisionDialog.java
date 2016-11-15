@@ -31,30 +31,26 @@ import com.saikrupa.app.util.DateUtil;
 
 public class ManageRevisionDialog extends BaseAppDialog {
 
-	
 	private static final long serialVersionUID = 1L;
 	private WebTable revisionContentTable;
 	private EmployeeData currentEmployee;
-	
 
 	public ManageRevisionDialog(SKAMainApp owner) {
 		super(owner);
 		setSize(new Dimension(600, 800));
 	}
-	
+
 	public ManageRevisionDialog(UpdateEmployeeDialog updateEmployeeDialog, EmployeeData employee) {
 		super(updateEmployeeDialog, true);
 		setCurrentEmployee(employee);
 		setTitle("Manage Salary Revisions...");
 		setSize(new Dimension(600, 800));
 		setLocationRelativeTo(updateEmployeeDialog);
-		//setResizable(false);
 		buildGUI(updateEmployeeDialog, employee);
 	}
 
 	private void buildGUI(UpdateEmployeeDialog owner, EmployeeData employee) {
-		
-		
+
 		WebPanel formPanel = new WebPanel();
 		formPanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
 		GridBagLayout layout = new GridBagLayout();
@@ -81,7 +77,7 @@ public class ManageRevisionDialog extends BaseAppDialog {
 		WebLabel l2 = new WebLabel("Employee Name : ", SwingConstants.RIGHT);
 		final WebLabel contactLabel = new WebLabel(employee.getName());
 		l2.setFont(applyLabelFont());
-		
+
 		c.gridx = 2;
 		c.gridy = 0;
 		c.insets = new Insets(0, 80, 10, 0);
@@ -93,7 +89,7 @@ public class ManageRevisionDialog extends BaseAppDialog {
 		c.insets = new Insets(0, 10, 10, 0);
 		layout.setConstraints(contactLabel, c);
 		formPanel.add(contactLabel);
-		
+
 		/**
 		 * 
 		 */
@@ -116,7 +112,8 @@ public class ManageRevisionDialog extends BaseAppDialog {
 		WebLabel l4 = new WebLabel("Revised Salary : ", SwingConstants.RIGHT);
 		final WebTextField revisedSalaryText = new WebTextField(15);
 		l4.setFont(applyLabelFont());
-		
+		revisedSalaryText.setText("0.0");
+
 		c.gridx = 2;
 		c.gridy = 1;
 		c.insets = new Insets(0, 80, 10, 0);
@@ -128,12 +125,17 @@ public class ManageRevisionDialog extends BaseAppDialog {
 		c.insets = new Insets(0, 10, 10, 0);
 		layout.setConstraints(revisedSalaryText, c);
 		formPanel.add(revisedSalaryText);
-		
+
 		/**
 		 * Row 3
 		 */
+
 		WebLabel l5 = new WebLabel("Effective From : ", SwingConstants.RIGHT);
 		final WebDateField effectiveFromText = new WebDateField(new Date());
+		if (employee.getRevisions().isEmpty()) {
+			effectiveFromText.setDate(employee.getJoiningDate());
+		}
+		
 		l5.setFont(applyLabelFont());
 
 		c.gridx = 0;
@@ -151,7 +153,7 @@ public class ManageRevisionDialog extends BaseAppDialog {
 		WebLabel l6 = new WebLabel("Effective Till : ", SwingConstants.RIGHT);
 		final WebDateField effectiveTillText = new WebDateField(new Date());
 		l6.setFont(applyLabelFont());
-		
+
 		c.gridx = 2;
 		c.gridy = 2;
 		c.insets = new Insets(0, 80, 10, 0);
@@ -163,10 +165,10 @@ public class ManageRevisionDialog extends BaseAppDialog {
 		c.insets = new Insets(0, 10, 10, 0);
 		layout.setConstraints(effectiveTillText, c);
 		formPanel.add(effectiveTillText);
-		
+
 		final WebButton addRevisionButton = new WebButton("Add Revision");
 		addRevisionButton.setActionCommand("ADD_REVISION");
-		
+		addRevisionButton.setFont(applyLabelFont());
 		c.gridx = 4;
 		c.gridy = 3;
 		c.insets = new Insets(0, 10, 10, 0);
@@ -179,21 +181,21 @@ public class ManageRevisionDialog extends BaseAppDialog {
 		revisionContentTable.getTableHeader().setFont(applyLabelFont());
 		revisionContentTable.setRowHeight(25);
 		revisionContentTable.setFont(applyTableFont());
-		
+
 		WebButton cancelButton = new WebButton("Cancel");
-		cancelButton.setActionCommand("CANCEL");		
+		cancelButton.setActionCommand("CANCEL");
 		cancelButton.setFont(applyLabelFont());
-		
-		WebButton saveButton = new WebButton("Save Revision");
+
+		final WebButton saveButton = new WebButton("Save");
+		saveButton.setEnabled(false);
 		saveButton.setActionCommand("SAVE");
 		saveButton.setFont(applyLabelFont());
-		
-		
+
 		ActionListener l = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(e.getActionCommand().equalsIgnoreCase("CANCEL")) {
+				if (e.getActionCommand().equalsIgnoreCase("CANCEL")) {
 					dispose();
-				} else if(e.getActionCommand().equalsIgnoreCase("ADD_REVISION")) {
+				} else if (e.getActionCommand().equalsIgnoreCase("ADD_REVISION")) {
 					EmployeeSalaryData data = new EmployeeSalaryData();
 					data.setEmployee(getCurrentEmployee());
 					data.setEffectiveFrom(effectiveFromText.getDate());
@@ -202,22 +204,23 @@ public class ManageRevisionDialog extends BaseAppDialog {
 					updateRevisionTableModel(data);
 					revalidate();
 					addRevisionButton.setEnabled(false);
-				} else if(e.getActionCommand().equalsIgnoreCase("SAVE")) {
-					EmployeeRevisionTableModel model = (EmployeeRevisionTableModel)revisionContentTable.getModel();
+					saveButton.setEnabled(true);
+				} else if (e.getActionCommand().equalsIgnoreCase("SAVE")) {
+					EmployeeRevisionTableModel model = (EmployeeRevisionTableModel) revisionContentTable.getModel();
 					currentEmployee.setRevisions(model.getRevisionDataList());
 					dispose();
 				}
-			}			
+			}
 		};
 		addRevisionButton.addActionListener(l);
 		saveButton.addActionListener(l);
 		cancelButton.addActionListener(l);
-		
+
 		add(new GroupPanel(formPanel), BorderLayout.NORTH);
 		WebPanel mainPanel = new WebPanel(new BorderLayout());
 		mainPanel.add(formPanel, BorderLayout.NORTH);
 		mainPanel.add(new WebScrollPane(revisionContentTable), BorderLayout.CENTER);
-		
+
 		WebPanel southPanel = new WebPanel(new FlowLayout(FlowLayout.RIGHT));
 		southPanel.add(saveButton);
 		southPanel.add(cancelButton);
@@ -226,16 +229,16 @@ public class ManageRevisionDialog extends BaseAppDialog {
 		setSize(800, 400);
 		setLocationRelativeTo(owner);
 	}
-	
+
 	private void updateRevisionTableModel(EmployeeSalaryData data) {
 		data.setCurrentRevision(true);
-		EmployeeRevisionTableModel model = (EmployeeRevisionTableModel)revisionContentTable.getModel();
+		EmployeeRevisionTableModel model = (EmployeeRevisionTableModel) revisionContentTable.getModel();
 		model.getRevisionDataList().add(0, data);
 		model.fireTableDataChanged();
 		revalidate();
-		
+
 	}
-	
+
 	public WebTable getRevisionContentTable() {
 		return revisionContentTable;
 	}
@@ -251,7 +254,5 @@ public class ManageRevisionDialog extends BaseAppDialog {
 	public void setCurrentEmployee(EmployeeData currentEmployee) {
 		this.currentEmployee = currentEmployee;
 	}
-
-	
 
 }

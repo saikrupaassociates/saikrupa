@@ -139,6 +139,22 @@ public class BaseAppDialog extends WebDialog {
 		NotificationManager.showNotification(notificationPopup);
 		clock.start();
 	}
+	
+	public void showFailureNotification() {
+		final WebNotification notificationPopup = new WebNotification();
+		notificationPopup.setIcon(NotificationIcon.plus);
+		notificationPopup.setDisplayTime(3000);
+
+		final WebClock clock = new WebClock();
+		clock.setClockType(ClockType.timer);
+		clock.setTimeLeft(3000);
+		clock.setTimePattern("'Operation was not Successful' ");
+		clock.setFont(new Font("Verdana", Font.BOLD, 14));
+		clock.setForeground(Color.RED);
+		notificationPopup.setContent(new GroupPanel(clock));
+		NotificationManager.showNotification(notificationPopup);
+		clock.start();
+	}
 
 	public Icon createImageIcon(String path) {
 		this.getClass().getClassLoader();

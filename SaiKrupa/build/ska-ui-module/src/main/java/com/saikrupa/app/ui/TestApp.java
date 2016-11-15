@@ -2,7 +2,6 @@ package com.saikrupa.app.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -26,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import com.alee.extended.button.WebSplitButton;
 import com.alee.extended.date.WebDateField;
 import com.alee.extended.menu.DynamicMenuType;
 import com.alee.extended.menu.WebDynamicMenu;
@@ -36,14 +36,18 @@ import com.alee.laf.button.WebButton;
 import com.alee.laf.combobox.WebComboBox;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.list.WebList;
+import com.alee.laf.menu.WebMenuItem;
+import com.alee.laf.menu.WebPopupMenu;
 import com.alee.laf.optionpane.WebOptionPane;
 import com.alee.laf.panel.WebPanel;
+import com.alee.laf.progressbar.WebProgressBar;
 import com.alee.laf.rootpane.WebFrame;
 import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.table.WebTable;
 import com.alee.laf.text.WebPasswordField;
 import com.alee.laf.text.WebTextArea;
 import com.alee.laf.text.WebTextField;
+import com.alee.managers.hotkey.Hotkey;
 import com.alee.utils.SwingUtils;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
@@ -62,7 +66,7 @@ public class TestApp extends WebFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private Webcam webcam = null;
 	private WebPanel photoPanel;
 	private WebPanel imagePanel;
@@ -70,7 +74,23 @@ public class TestApp extends WebFrame {
 	public TestApp() {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		// showInputOption();
-		employeeCreate();
+		showLogin();
+	}
+
+	private void southPanelShow() {
+		final WebSplitButton splitButton = new WebSplitButton("Click me", WebLookAndFeel.getIcon(16));
+
+		// Menu for split button
+		final WebPopupMenu popupMenu = new WebPopupMenu();
+		popupMenu.add(new WebMenuItem("Menu item 1", WebLookAndFeel.getIcon(16), Hotkey.ALT_X));
+		popupMenu.add(new WebMenuItem("Menu item 2", Hotkey.D));
+		popupMenu.addSeparator();
+		popupMenu.add(new WebMenuItem("Menu item 3", Hotkey.ESCAPE));
+		splitButton.setPopupMenu(popupMenu);
+
+		getContentPane().add(new GroupPanel(splitButton), BorderLayout.NORTH);
+		setSize(700, 800);
+
 	}
 
 	private void employeeCreate() {
@@ -176,7 +196,7 @@ public class TestApp extends WebFrame {
 		ImageIcon image = new ImageIcon("D:/gaga/image/download.jpg");
 		WebLabel imageLabel = new WebLabel("", image, WebLabel.CENTER);
 		photoPanel.add(imageLabel);
-		
+
 		c1.gridx = 0;
 		c1.gridy = 0;
 		c1.insets = new Insets(0, 10, 10, 0);
@@ -200,8 +220,8 @@ public class TestApp extends WebFrame {
 		imagePanel.add(captureButton);
 
 		WebButton createEmployeeButton = new WebButton("Create");
-		
-		c.gridx = 1;	
+
+		c.gridx = 1;
 		c.gridy = 8;
 		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 1;
@@ -209,15 +229,15 @@ public class TestApp extends WebFrame {
 		formPanel.add(createEmployeeButton);
 
 		getContentPane().add(new GroupPanel(formPanel), BorderLayout.WEST);
-		getContentPane().add(new GroupPanel(imagePanel,new JPanel()), BorderLayout.EAST);
+		getContentPane().add(new GroupPanel(imagePanel, new JPanel()), BorderLayout.EAST);
 		pack();
 
 		ActionListener l = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(e.getActionCommand().equalsIgnoreCase("START_WEBCAM")) {
+
+				if (e.getActionCommand().equalsIgnoreCase("START_WEBCAM")) {
 					webcam = Webcam.getDefault();
-					//webcam.setViewSize(new Dimension(640, 480));
+					// webcam.setViewSize(new Dimension(640, 480));
 					if (webcam != null) {
 						imagePanel.remove(photoPanel);
 						WebcamPanel panel = new WebcamPanel(webcam);
@@ -225,30 +245,30 @@ public class TestApp extends WebFrame {
 						panel.setMirrored(false);
 						imagePanel.add(panel);
 						revalidate();
-						
+
 					} else {
 						System.out.println("No webcam detected");
 					}
-				} else if(e.getActionCommand().equalsIgnoreCase("CAPTURE")) {
-					if(webcam != null) {
+				} else if (e.getActionCommand().equalsIgnoreCase("CAPTURE")) {
+					if (webcam != null) {
 						webcam.open();
 						BufferedImage image = webcam.getImage();
 						try {
 							ImageIO.write(image, "PNG", new File("D:/gaga/capture/test.png"));
 							webcam.close();
-							
+
 							ImageIcon capturedImage = new ImageIcon("D:/gaga/capture/test.png");
 							photoPanel.removeAll();
 							WebLabel label = new WebLabel("", capturedImage, WebLabel.CENTER);
 							photoPanel.add(label);
 							revalidate();
-							
+
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					}
-					
+
 				}
 			}
 		};
@@ -264,8 +284,8 @@ public class TestApp extends WebFrame {
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 
-		WebLabel l1 = new WebLabel("User ID : ", SwingConstants.RIGHT);
-		final WebTextField codeText = new WebTextField(15);
+		WebLabel l1 = new WebLabel("Current Password : ", SwingConstants.RIGHT);
+		final WebPasswordField currentPasswordText = new WebPasswordField(10);
 
 		c.gridx = 0;
 		c.gridy = 0;
@@ -277,11 +297,11 @@ public class TestApp extends WebFrame {
 		c.gridy = 0;
 		c.insets = new Insets(0, 10, 10, 0);
 
-		layout.setConstraints(codeText, c);
-		formPanel.add(codeText);
+		layout.setConstraints(currentPasswordText, c);
+		formPanel.add(currentPasswordText);
 
-		WebLabel l2 = new WebLabel("Password : ", SwingConstants.RIGHT);
-		final WebPasswordField passwordText = new WebPasswordField(15);
+		WebLabel l2 = new WebLabel("New Password : ", SwingConstants.RIGHT);
+		final WebPasswordField newPasswordField = new WebPasswordField(10);
 
 		c.gridx = 0;
 		c.gridy = 1;
@@ -293,22 +313,53 @@ public class TestApp extends WebFrame {
 		c.gridy = 1;
 		c.insets = new Insets(0, 10, 10, 0);
 
-		layout.setConstraints(passwordText, c);
-		formPanel.add(passwordText);
+		layout.setConstraints(newPasswordField, c);
+		formPanel.add(newPasswordField);
 
-		WebButton loginButton = new WebButton("Login");
-		c.gridx = 2;
-		c.gridy = 1;
+		/**
+		 * 
+		 */
+		WebLabel l3 = new WebLabel("Re-enter Password : ", SwingConstants.RIGHT);
+		final WebPasswordField repeatPasswordText = new WebPasswordField(10);
+
+		c.gridx = 0;
+		c.gridy = 2;
+
+		layout.setConstraints(l3, c);
+		formPanel.add(l3);
+
+		c.gridx = 1;
+		c.gridy = 2;
 		c.insets = new Insets(0, 10, 10, 0);
-		layout.setConstraints(loginButton, c);
-		formPanel.add(loginButton);
 
-		WebPanel loginPanel = new WebPanel(new BorderLayout());
-		loginPanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
-		loginPanel.add(formPanel, BorderLayout.CENTER);
-		getContentPane().add(loginPanel, BorderLayout.SOUTH);
+		layout.setConstraints(repeatPasswordText, c);
+		formPanel.add(repeatPasswordText);
+
+		WebButton loginButton = new WebButton("Change Password");
+		WebButton cancelButton = new WebButton("Cancel");
+		WebPanel buttonPanel = new WebPanel(true);
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+		buttonPanel.add(loginButton);
+		buttonPanel.add(cancelButton);
+
+		// WebPanel loginPanel = new WebPanel(new BorderLayout());
+		// loginPanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+		// loginPanel.add(formPanel, BorderLayout.CENTER);
+		getContentPane().add(formPanel, BorderLayout.CENTER);
+		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		pack();
 		setVisible(true);
+	}
+
+	private void progressBar() {
+		WebPanel formPanel = new WebPanel(new BorderLayout());
+		final WebProgressBar progressBar1 = new WebProgressBar(0, 100);
+		progressBar1.setValue(0);
+		progressBar1.setIndeterminate(false);
+		progressBar1.setStringPainted(true);
+		progressBar1.setVisible(true);
+
 	}
 
 	private void showInputOption() {

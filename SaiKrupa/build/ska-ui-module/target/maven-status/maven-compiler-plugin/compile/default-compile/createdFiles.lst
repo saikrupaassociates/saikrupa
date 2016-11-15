@@ -1,3 +1,4 @@
+com\saikrupa\app\ui\ChangePasswordDialog$1.class
 com\saikrupa\app\ui\models\EmployeeRevisionTableModel.class
 com\saikrupa\app\ui\models\OrderEntryTableModel.class
 com\saikrupa\app\ui\SKAMainApp$16.class
@@ -24,6 +25,7 @@ com\saikrupa\app\ui\SKAMainApp$7.class
 com\saikrupa\app\ui\order\UpdateOrderDeliveryDetailDialog$2.class
 com\saikrupa\app\util\ApplicationResourceBundle.class
 com\saikrupa\app\ui\order\OrderPaymentReviewPanel.class
+com\saikrupa\app\ui\ChangePasswordDialog.class
 com\saikrupa\app\ui\ManageProductDialog$1.class
 com\saikrupa\app\ui\ManageExpenseDialog$2.class
 com\saikrupa\app\ui\ManageInvestmentDialog.class

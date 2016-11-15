@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import com.saikrupa.app.dto.EmployeeData;
 import com.saikrupa.app.dto.ProductData;
 import com.saikrupa.app.util.DateUtil;
 
@@ -16,7 +17,7 @@ public class ProductTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String[] columnNames = { "Code", "Name", "Available", "Reserved","Rejected","Synced On"};
+	private String[] columnNames = { "Code", "Name", "Available", "Reserved","Rejected","Last Updated On", "Updated By"};
 	
 	private List<ProductData> productDataList;
 
@@ -47,8 +48,15 @@ public class ProductTableModel extends AbstractTableModel {
 		}  else if(col == 4) {
 			return data.getInventory().getTotalDamagedQuantity();
 		}  else if(col == 5) {
-			return DateUtil.convertToString("dd-MMM-yyyy hh:mm:ss", data.getInventory().getLastUpdatedDate());
-		} 
+			return DateUtil.convertToString("dd-MMM-yyyy hh:mm:ss a", data.getInventory().getLastUpdatedDate());
+		}   else if(col == 6) {	
+			EmployeeData updatedBy = data.getInventory().getLastUpdatedBy();
+			if(updatedBy == null) {
+				return "N/A";
+			}
+			return updatedBy.getName();
+			
+		}  
 		return "---";
 	}
 	

@@ -49,7 +49,7 @@ public class ManageExpenseDialog extends BaseAppDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private AppTextField paidToVendorText;
 	private WebComboBox expCategoryCombo;
 	private WebTextField expAmount;
@@ -59,8 +59,6 @@ public class ManageExpenseDialog extends BaseAppDialog {
 	private WebTextArea area;
 	private WebButton expenseButton;
 	private WebLabel expCodeLabel;
-	
-	
 
 	public ManageExpenseDialog(SKAMainApp owner) {
 		super(owner, true);
@@ -74,31 +72,30 @@ public class ManageExpenseDialog extends BaseAppDialog {
 
 	public ManageExpenseDialog(SKAMainApp sdMainApp, ExpenseData data) {
 		this(sdMainApp);
-		setTitle("View / Update Expense - "+data.getCode());
+		setTitle("View / Update Expense - " + data.getCode());
 		loadExpenseData(data);
-		
 	}
 
 	private void loadExpenseData(ExpenseData data) {
 		expCodeLabel = new WebLabel(data.getCode());
 		expenseButton.setText("Update Expense");
 		expenseButton.setActionCommand("UPDATE_EXPENSE");
-		
+
 		paidToVendorText.setModel(data.getVendor());
 		paidToVendorText.setText(data.getVendor().getName());
-		
+
 		expAmount.setText(data.getAmount().toString());
 		expenseDate.setDate(data.getExpenseDate());
-		
-		PaymentTypeModel paymentTypeModel = ((PaymentTypeModel)paymentTypeCombo.getModel());
+
+		PaymentTypeModel paymentTypeModel = ((PaymentTypeModel) paymentTypeCombo.getModel());
 		paymentTypeModel.setSelectedItem(data.getPaymentData());
-		
-		InvestorModel investorModel = (InvestorModel)investorCombo.getModel();
+
+		InvestorModel investorModel = (InvestorModel) investorCombo.getModel();
 		investorModel.setSelectedItem(data.getPaidBy());
-		
-		ExpenseTypeModel expTypeModel = (ExpenseTypeModel)expCategoryCombo.getModel();
+
+		ExpenseTypeModel expTypeModel = (ExpenseTypeModel) expCategoryCombo.getModel();
 		expTypeModel.setSelectedItem(data.getExpenseType());
-		
+
 		area.setText(data.getComments());
 	}
 
@@ -113,8 +110,8 @@ public class ManageExpenseDialog extends BaseAppDialog {
 
 		WebLabel l1 = new WebLabel("Expense Category : ", SwingConstants.RIGHT);
 		l1.setFont(applyLabelFont());
-		expCategoryCombo = new WebComboBox(new ExpenseTypeModel());		
-		expCategoryCombo.setRenderer(new ExpenseTypeListCellRenderer());		
+		expCategoryCombo = new WebComboBox(new ExpenseTypeModel());
+		expCategoryCombo.setRenderer(new ExpenseTypeListCellRenderer());
 
 		WebLabel l2 = new WebLabel("Paid To : ", SwingConstants.RIGHT);
 		l2.setFont(applyLabelFont());
@@ -142,7 +139,7 @@ public class ManageExpenseDialog extends BaseAppDialog {
 
 		c.gridx = 1;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 0, 0); // Left padding
+		c.insets = new Insets(0, 10, 0, 0);
 		layout.setConstraints(expCategoryCombo, c);
 		formPanel.add(expCategoryCombo);
 
@@ -156,19 +153,19 @@ public class ManageExpenseDialog extends BaseAppDialog {
 
 		c.gridx = 3;
 		c.gridy = 0;
-		c.insets = new Insets(0, 10, 0, 0); // Left padding
+		c.insets = new Insets(0, 10, 0, 0);
 		layout.setConstraints(paidToVendorText, c);
 		formPanel.add(paidToVendorText);
 
 		c.gridx = 0;
 		c.gridy = 1;
-		c.insets = new Insets(10, 0, 0, 0); // Left padding
+		c.insets = new Insets(10, 0, 0, 0);
 		layout.setConstraints(l3, c);
 		formPanel.add(l3);
 
 		c.gridx = 1;
 		c.gridy = 1;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(expAmount, c);
 		formPanel.add(expAmount);
 
@@ -176,54 +173,51 @@ public class ManageExpenseDialog extends BaseAppDialog {
 
 		c.gridx = 2;
 		c.gridy = 1;
-		c.insets = new Insets(10, 0, 0, 0); // Left padding
+		c.insets = new Insets(10, 0, 0, 0);
 		layout.setConstraints(l4, c);
 		formPanel.add(l4);
 
 		c.gridx = 3;
 		c.gridy = 1;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(expenseDate, c);
 		formPanel.add(expenseDate);
-		
+
 		WebLabel l6 = new WebLabel("Payment Mode : ", SwingConstants.RIGHT);
 		l6.setFont(applyLabelFont());
 		paymentTypeCombo = new WebComboBox(new PaymentTypeModel());
 		paymentTypeCombo.setRenderer(new paymentTypeListCellRenderer());
-					
+
 		c.gridx = 0;
 		c.gridy = 4;
-		c.insets = new Insets(10, 0, 0, 0); // Left padding
+		c.insets = new Insets(10, 0, 0, 0);
 		c.anchor = GridBagConstraints.EAST;
 		layout.setConstraints(l6, c);
 		formPanel.add(l6);
 
 		c.gridx = 1;
 		c.gridy = 4;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
-		//c.gridwidth = 3;
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(paymentTypeCombo, c);
 		formPanel.add(paymentTypeCombo);
-		
+
 		WebLabel l7 = new WebLabel("Paid By : ", SwingConstants.RIGHT);
 		l7.setFont(applyLabelFont());
 		investorCombo = new WebComboBox(new InvestorModel());
 		investorCombo.setRenderer(new InvestorListCellRenderer());
-		
+
 		c.gridx = 2;
 		c.gridy = 4;
-		c.insets = new Insets(10, 0, 0, 0); // Left padding
+		c.insets = new Insets(10, 0, 0, 0);
 		c.anchor = GridBagConstraints.EAST;
 		layout.setConstraints(l7, c);
 		formPanel.add(l7);
 
 		c.gridx = 3;
 		c.gridy = 4;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
-		//c.gridwidth = 3;
+		c.insets = new Insets(10, 10, 0, 0);
 		layout.setConstraints(investorCombo, c);
 		formPanel.add(investorCombo);
-		//dfsfdsfds
 
 		WebLabel l5 = new WebLabel("Description : ", SwingConstants.RIGHT);
 		l5.setFont(applyLabelFont());
@@ -231,20 +225,19 @@ public class ManageExpenseDialog extends BaseAppDialog {
 
 		c.gridx = 0;
 		c.gridy = 6;
-		c.insets = new Insets(10, 0, 0, 0); // Left padding
+		c.insets = new Insets(10, 0, 0, 0);
 		c.anchor = GridBagConstraints.NORTH;
 		layout.setConstraints(l5, c);
 		formPanel.add(l5);
 
 		c.gridx = 1;
 		c.gridy = 6;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 3;
 		WebScrollPane areaScroll = new WebScrollPane(area);
 		areaScroll.setBorder(expAmount.getBorder());
 		layout.setConstraints(areaScroll, c);
 		formPanel.add(areaScroll);
-		
 
 		expenseButton = new WebButton("Create Expense");
 		expenseButton.setFont(applyLabelFont());
@@ -257,7 +250,7 @@ public class ManageExpenseDialog extends BaseAppDialog {
 					popOver.setLayout(new VerticalFlowLayout());
 					popOver.add(new AppWebLabel("Expense Amount is not filled or invalid"));
 					popOver.show((WebTextField) expAmount);
-				} else if(paidToVendorText.getText().trim().isEmpty()) {
+				} else if (paidToVendorText.getText().trim().isEmpty()) {
 					final WebPopOver popOver = new WebPopOver(ManageExpenseDialog.this);
 					popOver.setCloseOnFocusLoss(true);
 					popOver.setMargin(10);
@@ -271,68 +264,60 @@ public class ManageExpenseDialog extends BaseAppDialog {
 					expenseData.setAmount(Double.valueOf(expAmount.getText()));
 					expenseData.setExpenseDate(expenseDate.getDate());
 					expenseData.setComments(area.getText());
-					
+
 					PaymentTypeData paymentType = (PaymentTypeData) paymentTypeCombo.getSelectedItem();
 					expenseData.setPaymentData(paymentType);
-					
-					InvestorData investor = (InvestorData) investorCombo.getSelectedItem();					
-					expenseData.setPaidBy(investor);					
-					
-					expenseData.setVendor((VendorData)paidToVendorText.getModel());
-					if(("CREATE_EXPENSE").equalsIgnoreCase(e.getActionCommand())) {
+
+					InvestorData investor = (InvestorData) investorCombo.getSelectedItem();
+					expenseData.setPaidBy(investor);
+
+					expenseData.setVendor((VendorData) paidToVendorText.getModel());
+					if (("CREATE_EXPENSE").equalsIgnoreCase(e.getActionCommand())) {
 						processCreateExpenseEvent(expenseData, owner);
 					} else {
 						expenseData.setCode(expCodeLabel.getText());
 						processUpdateExpenseEvent(expenseData, owner);
 					}
-					
 				}
-
 			}
 		});
 
 		c.gridx = 1;
 		c.gridy = 7;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(10, 10, 0, 0); // Left padding
+		c.insets = new Insets(10, 10, 0, 0);
 		c.gridwidth = 1;
-		
+
 		layout.setConstraints(expenseButton, c);
 		formPanel.add(expenseButton);
-		
-		searchButton.addActionListener(new ActionListener() {			
+
+		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				displayVendorList(owner);				
-			}			
+				displayVendorList(owner);
+			}
 		});
 		getContentPane().add(new GroupPanel(formPanel), BorderLayout.CENTER);
 		pack();
 	}
-	
+
 	private void displayVendorList(SKAMainApp owner) {
 		DisplayVendorListDialog dialog = new DisplayVendorListDialog(this);
 		dialog.setVisible(true);
 	}
-	
-	
+
 	protected void processUpdateExpenseEvent(ExpenseData expenseData, SKAMainApp owner) {
 		ExpenseService service = new DefaultExpenseService();
 		try {
 			service.updateExpense(expenseData);
 			ExpenseTableModel model = (ExpenseTableModel) owner.getExpenseContentTable().getModel();
-			
 			ExpenseDAO dao = new DefaultExpenseDAO();
 			model.setExpenseDataList(dao.findAllExpenses());
-			model.fireTableDataChanged();		
+			model.fireTableDataChanged();
 			showSuccessNotification();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
-
-	
 
 	protected void processCreateExpenseEvent(ExpenseData expenseData, SKAMainApp owner) {
 		ExpenseService service = new DefaultExpenseService();
@@ -340,13 +325,11 @@ public class ManageExpenseDialog extends BaseAppDialog {
 			ExpenseData insertedExpense = service.createExpense(expenseData);
 			ExpenseTableModel model = (ExpenseTableModel) owner.getExpenseContentTable().getModel();
 			model.getExpenseDataList().add(insertedExpense);
-			model.fireTableDataChanged();		
+			model.fireTableDataChanged();
 			showSuccessNotification();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 	private boolean isNumeric(String text) {
@@ -362,5 +345,4 @@ public class ManageExpenseDialog extends BaseAppDialog {
 	public AppTextField getPaidToVendorText() {
 		return paidToVendorText;
 	}
-
 }

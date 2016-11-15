@@ -31,7 +31,7 @@ public class DateUtil {
 			return "N/A";
 		}		
 		
-		return convertToString("dd-MMM-yyyy hh:mm:ss", date);
+		return convertToString("dd-MMM-yyyy HH:mm:ss", date);
 	}
 	
 	public static java.util.Date convertDate(java.sql.Date sqlDate) {
@@ -40,10 +40,14 @@ public class DateUtil {
 		return cal.getTime();
 	}
 	
+	public static java.util.Date convertDate(java.sql.Timestamp sqlDate) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(sqlDate.getTime());
+		return cal.getTime();
+	}
+	
 	public static Timestamp createCurrentTimeStamp() { 
-		Date date = new Date();
-		Timestamp ts = new Timestamp(date.getTime());
-		return ts;
+		return new Timestamp(Calendar.getInstance().getTimeInMillis());
 	}
 	
 	

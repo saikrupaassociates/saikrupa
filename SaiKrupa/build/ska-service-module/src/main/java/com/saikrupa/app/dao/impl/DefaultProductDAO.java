@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.saikrupa.app.dao.EmployeeDAO;
 import com.saikrupa.app.dao.ProductDAO;
 import com.saikrupa.app.db.PersistentManager;
 import com.saikrupa.app.dto.InventoryData;
@@ -106,10 +107,11 @@ public class DefaultProductDAO implements ProductDAO {
 	}
 
 	public InventoryData findInventoryLevelByProduct(ProductData productData) {
-		final String sql = "SELECT I.CODE, I.TOTAL_AVAILABLE_QUANTITY, I.TOTAL_RESERVED_QUANTITY, I.TOTAL_DAMAGED_QUANTITY, I.LAST_UPDATED_DATE FROM INVENTORY I, PRODUCT P WHERE P.CODE=I.PRODUCT_CODE AND P.CODE=? ORDER BY I.LAST_UPDATED_DATE DESC";
+		final String sql = "SELECT I.CODE, I.TOTAL_AVAILABLE_QUANTITY, I.TOTAL_RESERVED_QUANTITY, I.TOTAL_DAMAGED_QUANTITY, I.LAST_UPDATED_DATE, I.LAST_MODIFIED_BY FROM INVENTORY I, PRODUCT P WHERE P.CODE=I.PRODUCT_CODE AND P.CODE=? ORDER BY I.LAST_UPDATED_DATE DESC";
 		PersistentManager manager = PersistentManager.getPersistentManager();
 		Connection connection = manager.getConnection();
 		List<InventoryData> invList = new ArrayList<InventoryData>();
+		EmployeeDAO empDAO = new DefaultEmployeeDAO();	
 		try {
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, productData.getCode());
@@ -120,7 +122,8 @@ public class DefaultProductDAO implements ProductDAO {
 				data.setTotalAvailableQuantity(rs.getDouble(2));
 				data.setTotalReservedQuantity(rs.getDouble(3));				
 				data.setTotalDamagedQuantity(rs.getDouble(4));
-				data.setLastUpdatedDate(DateUtil.convertDate(rs.getDate(5)));
+				data.setLastUpdatedDate(DateUtil.convertDate(rs.getTimestamp(5)));				 
+				data.setLastUpdatedBy(empDAO.findEmployeeByCode(rs.getString(6)));
 				data.setProduct(productData);
 				invList.add(data);
 			}

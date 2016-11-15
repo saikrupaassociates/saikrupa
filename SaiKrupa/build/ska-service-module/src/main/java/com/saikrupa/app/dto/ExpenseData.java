@@ -16,11 +16,14 @@ public class ExpenseData {
 	
 	private String code;
 	private VendorData vendor;
-	private PaymentTypeData paymentData;
-	
-	private InvestorData paidBy;
-	
+	private PaymentTypeData paymentData;	
+	private InvestorData paidBy;	
 	private String comments;
+	private EmployeeData updatedBy;
+	private EmployeeData createdBy;
+	
+	private Date createdDate;
+	private Date lastModifedDate;
 	
 	public ExpenseData() {
 		
@@ -89,6 +92,38 @@ public class ExpenseData {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	public EmployeeData getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(EmployeeData updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public EmployeeData getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(EmployeeData createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Date getLastModifedDate() {
+		return lastModifedDate;
+	}
+
+	public void setLastModifedDate(Date lastModifedDate) {
+		this.lastModifedDate = lastModifedDate;
 	}
 
 }

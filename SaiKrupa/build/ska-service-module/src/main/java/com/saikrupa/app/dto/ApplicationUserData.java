@@ -10,8 +10,12 @@ public class ApplicationUserData {
 	private char[] password;
 	private Date createdDate;
 	
+	private int userRole;
+	
+	private boolean admin;
+	
 	public ApplicationUserData() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	
@@ -62,6 +66,30 @@ public class ApplicationUserData {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+
+
+	public int getUserRole() {
+		return userRole;
+	}
+
+
+
+	public void setUserRole(int userRole) {
+		this.userRole = userRole;
+	}
+
+
+
+	public boolean isAdmin() {
+		return (getUserRole() == 1000 ? true : false);
+	}
+
+
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 
 }

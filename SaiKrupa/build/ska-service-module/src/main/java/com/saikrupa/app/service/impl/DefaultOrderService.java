@@ -25,7 +25,10 @@ public class DefaultOrderService implements OrderService {
 	public OrderData createOrder(OrderData order) {
 		PersistentManager manager = PersistentManager.getPersistentManager();
 		Connection connection = manager.getConnection();
-		final String sql = "INSERT INTO COM_ORDER (ORDER_STATUS, PAYMENT_STATUS, DELIVERY_STATUS, CUSTOMER_CODE, CREATED_DATE, CREATED_BY) VALUES(?,?,?,?,?,?)";
+		final String sql = "INSERT INTO COM_ORDER (ORDER_STATUS, PAYMENT_STATUS, "
+				+ "DELIVERY_STATUS, CUSTOMER_CODE, "
+				+ "CREATED_DATE, CREATED_BY, "
+				+ "MODIFIED_DATE, LAST_MODIFIED_BY) VALUES(?,?,?,?,?,?,?,?)";
 		boolean commit = false;
 		try {
 			connection.setAutoCommit(false);
@@ -36,9 +39,11 @@ public class DefaultOrderService implements OrderService {
 			statement.setInt(2, OrderUtil.getPaymentStatusCode(order));
 			statement.setInt(3, 1); // Delivery Status
 			statement.setInt(4, Integer.valueOf(customer.getCode()));
-			statement.setDate(5, new java.sql.Date(Calendar.getInstance().getTimeInMillis()));
-			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getProperty("CURRENT_USER");
+			statement.setTimestamp(5, new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis()));			
+			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
 			statement.setString(6, currentUser.getUserId());
+			statement.setTimestamp(7, new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis()));
+			statement.setString(8, currentUser.getUserId());
 			
 			int count = statement.executeUpdate();
 			if (count > 0) {
@@ -80,7 +85,10 @@ public class DefaultOrderService implements OrderService {
 		PersistentManager manager = PersistentManager.getPersistentManager();
 		Connection connection = manager.getConnection();
 
-		final String sql = "UPDATE COM_ORDER SET ORDER_STATUS = ?, PAYMENT_STATUS = ?, DELIVERY_STATUS = ? WHERE CODE=?";
+		final String sql = "UPDATE COM_ORDER "
+				+ "SET ORDER_STATUS = ?, PAYMENT_STATUS = ?, "
+				+ "DELIVERY_STATUS = ? , "
+				+ "MODIFIED_DATE = ? , LAST_MODIFIED_BY = ? WHERE CODE=?";
 		PreparedStatement statement = null;
 		try {
 			connection.setAutoCommit(false);
@@ -89,7 +97,10 @@ public class DefaultOrderService implements OrderService {
 			statement.setInt(1, OrderUtil.getOrderStatusCode(order));
 			statement.setInt(2, OrderUtil.getPaymentStatusCode(order));
 			statement.setInt(3, OrderUtil.getDeliveryStatusCode(order));
-			statement.setString(4, order.getCode());
+			statement.setTimestamp(4, new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis()));
+			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
+			statement.setString(5, currentUser.getUserId());
+			statement.setString(6, order.getCode());
 			int row = statement.executeUpdate();
 			if (row < 1) {
 				throw new Exception("updateOrderStatus failed to Update Order");
@@ -139,7 +150,7 @@ public class DefaultOrderService implements OrderService {
 	}
 
 	private void createDeliveryEntry(DeliveryData entryDeliveryData, OrderEntryData entry, Connection connection) {
-		final String SQL_CREATE_DELIVERY_ENTRY = "INSERT INTO COM_ORDER_DELIVERY(ORDER_CODE, ENTRY_NO, DELIVERED_QUANTITY, DELIVERY_RECEIPT_NO, DELIVERY_DATE, VEHICLE_CODE) VALUES(?,?,?,?,?,?)";
+		final String SQL_CREATE_DELIVERY_ENTRY = "INSERT INTO COM_ORDER_DELIVERY(ORDER_CODE, ENTRY_NO, DELIVERED_QUANTITY, DELIVERY_RECEIPT_NO, DELIVERY_DATE, VEHICLE_CODE, LAST_MODIFIED_BY) VALUES(?,?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement ps = connection.prepareStatement(SQL_CREATE_DELIVERY_ENTRY,
@@ -150,6 +161,10 @@ public class DefaultOrderService implements OrderService {
 			ps.setInt(4, Integer.valueOf(entryDeliveryData.getDeliveryReceiptNo()));
 			ps.setDate(5, new java.sql.Date(entryDeliveryData.getDeliveryDate().getTime()));
 			ps.setString(6, entryDeliveryData.getDeliveryVehicleNo());
+			
+			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
+			ps.setString(7, currentUser.getUserId());
+			
 			int row = ps.executeUpdate();
 			if (row < 1) {
 				throw new SQLException("createDeliveryEntry failed to Create Order Delivery Entry for Order "
@@ -167,7 +182,7 @@ public class DefaultOrderService implements OrderService {
 	}
 
 	private void createOrderEntries(OrderData order, Connection connection) throws Exception {
-		final String SQL_CREATE_ORDER_ENTRIES = "insert into COM_ORDER_ENTRY(ENTRY_NO, QUANTITY, PRICE, DELIVERY_COST, DISCOUNT, NOTES, ORDER_CODE, PRODUCT_CODE) values(?,?,?,?,?,?,?,?)";
+		final String SQL_CREATE_ORDER_ENTRIES = "insert into COM_ORDER_ENTRY(ENTRY_NO, QUANTITY, PRICE, DELIVERY_COST, DISCOUNT, NOTES, ORDER_CODE, PRODUCT_CODE, LAST_MODIFIED_BY) values(?,?,?,?,?,?,?,?,?)";
 		PreparedStatement ps = connection.prepareStatement(SQL_CREATE_ORDER_ENTRIES,
 				PreparedStatement.RETURN_GENERATED_KEYS);
 		for (OrderEntryData entry : order.getOrderEntries()) {
@@ -179,6 +194,9 @@ public class DefaultOrderService implements OrderService {
 			ps.setString(6, entry.getEntryNote());
 			ps.setString(7, order.getCode());
 			ps.setString(8, entry.getProduct().getCode());
+			
+			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
+			ps.setString(9, currentUser.getUserId());
 
 			int count = ps.executeUpdate();
 			if (count > 0) {
@@ -193,11 +211,12 @@ public class DefaultOrderService implements OrderService {
 	}
 
 	private void updateProductInventory(OrderEntryData entry, Connection connection) throws Exception {
-		final String SQL_UPDATE_INVENTORY = "UPDATE INVENTORY SET TOTAL_AVAILABLE_QUANTITY = ? WHERE PRODUCT_CODE=?";
+		final String SQL_UPDATE_INVENTORY = "UPDATE INVENTORY SET TOTAL_AVAILABLE_QUANTITY = ?, LAST_MODIFIED_BY = ? WHERE PRODUCT_CODE=?";
 		double newQuantity = entry.getProduct().getInventory().getTotalAvailableQuantity() - entry.getOrderedQuantity();
 		PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_INVENTORY);
 		statement.setDouble(1, newQuantity);
-		statement.setString(2, entry.getProduct().getCode());
+		statement.setString(2, "SYSTEM");
+		statement.setString(3, entry.getProduct().getCode());
 		int resultCount = statement.executeUpdate();
 		if (resultCount > 0) {
 			System.out.println("Inventory reduced to " + newQuantity + " for product " + entry.getProduct().getName());
@@ -206,7 +225,7 @@ public class DefaultOrderService implements OrderService {
 	
 	private void createInventoryEntryForOrder(OrderEntryData orderEntry, Connection connection) {
 		PreparedStatement ps = null;
-		String sql = "INSERT INTO INVENTORY_ENTRY (INVENTORY_CODE, CREATED_DATE, QUANTITY_ADDED, QUANTITY_REDUCED, QUANTITY_RESERVED, QUANTITY_DAMAGED, CREATED_BY) VALUES(?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO INVENTORY_ENTRY (INVENTORY_CODE, CREATED_DATE, QUANTITY_ADDED, QUANTITY_REDUCED, QUANTITY_RESERVED, QUANTITY_DAMAGED, LAST_MODIFIED_BY) VALUES(?,?,?,?,?,?,?)";
 		try {
 			ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, orderEntry.getProduct().getInventory().getCode());
@@ -216,7 +235,7 @@ public class DefaultOrderService implements OrderService {
 			ps.setDouble(5, Double.valueOf("0.0"));
 			ps.setDouble(6, Double.valueOf("0.0"));
 			
-			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getProperty("CURRENT_USER");
+			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
 			ps.setString(7, currentUser.getUserId());
 			
 			ps.executeUpdate();
@@ -258,13 +277,16 @@ public class DefaultOrderService implements OrderService {
 	private CustomerData createCustomer(CustomerData customer, Connection connection) throws Exception {
 
 		if (customer.getCode() == null) {
-			final String SQL_CREATE_CUSTOMER = "INSERT INTO CUSTOMER (NAME, CONTACT_PRIMARY, CONTACT_SECONDARY) VALUES(?, ?, ?)";
+			final String SQL_CREATE_CUSTOMER = "INSERT INTO CUSTOMER (NAME, CONTACT_PRIMARY, CONTACT_SECONDARY, LAST_MODIFIED_BY) VALUES(?,?,?,?)";
 			try {
 				PreparedStatement statement = connection.prepareStatement(SQL_CREATE_CUSTOMER,
 						PreparedStatement.RETURN_GENERATED_KEYS);
 				statement.setString(1, customer.getName());
 				statement.setString(2, customer.getPrimaryContact());
 				statement.setString(3, customer.getSecondaryContact());
+				ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
+				statement.setString(4, currentUser.getUserId());
+				
 				int count = statement.executeUpdate();
 				if (count > 0) {
 					ResultSet keys = statement.getGeneratedKeys();

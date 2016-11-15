@@ -11,6 +11,7 @@ public class EmployeeSalaryData {
 	private Date effectiveTill;
 	private boolean currentRevision;
 	
+	
 	public EmployeeSalaryData() {
 		// TODO Auto-generated constructor stub
 	}

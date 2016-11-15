@@ -3,6 +3,8 @@ package com.saikrupa.app.session;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.saikrupa.app.dto.ApplicationUserData;
+
 public class ApplicationSession {
 	
 	private static ApplicationSession session;
@@ -26,6 +28,14 @@ public class ApplicationSession {
 	
 	public Object getProperty(String key) {
 		return sessionMap.get(key);
+	}
+	
+	public ApplicationUserData getCurrentUser() {
+		return (ApplicationUserData) getProperty("CURRENT_USER");
+	}
+	
+	public void setCurrentUser(ApplicationUserData user) {
+		setProperty("CURRENT_USER", user);
 	}
 
 }

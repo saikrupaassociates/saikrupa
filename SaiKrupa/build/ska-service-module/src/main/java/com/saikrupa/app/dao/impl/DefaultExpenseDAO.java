@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.saikrupa.app.dao.DefaultPaymentModeDAO;
+import com.saikrupa.app.dao.EmployeeDAO;
 import com.saikrupa.app.dao.ExpenseDAO;
 import com.saikrupa.app.dao.ExpenseTypeDAO;
 import com.saikrupa.app.dao.InvestorDAO;
@@ -19,6 +20,7 @@ import com.saikrupa.app.dto.InvestorData;
 import com.saikrupa.app.dto.PaymentTypeData;
 import com.saikrupa.app.dto.VendorData;
 import com.saikrupa.app.service.impl.DefaultVendorService;
+import com.saikrupa.app.util.DateUtil;
 
 public class DefaultExpenseDAO implements ExpenseDAO {
 
@@ -28,11 +30,11 @@ public class DefaultExpenseDAO implements ExpenseDAO {
 
 	public List<ExpenseData> findAllExpenses() {
 		List<ExpenseData> expList = new ArrayList<ExpenseData>();
-		final String sql = "SELECT CODE, EXPENSE_DATE, AMOUNT, VENDOR_CODE, INVESTOR_CODE, CATEGORY_CODE, PAYMEMT_CODE, NOTES FROM EXPENSE ORDER BY EXPENSE_DATE DESC";
+		final String sql = "SELECT CODE, EXPENSE_DATE, AMOUNT, VENDOR_CODE, INVESTOR_CODE, CATEGORY_CODE, PAYMEMT_CODE, NOTES, CREATED_BY, CREATED_DATE, LAST_MODIFIED_BY, LAST_MODIFIED_DATE FROM EXPENSE ORDER BY EXPENSE_DATE DESC";
 		
 		PersistentManager manager = PersistentManager.getPersistentManager();
 		Connection connection = manager.getConnection();
-		
+		EmployeeDAO employeeDAO = new DefaultEmployeeDAO();
 		try {
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
@@ -64,6 +66,12 @@ public class DefaultExpenseDAO implements ExpenseDAO {
 				data.setPaymentData(paymentData);
 				
 				data.setComments(rs.getString(8));
+				//CREATED_BY,CREATED_DATE, LAST_MODIFIED_BY, LAST_MODIFIED_DATE
+				data.setCreatedBy(employeeDAO.findEmployeeByCode(rs.getString(9)));
+				data.setCreatedDate(DateUtil.convertDate(rs.getTimestamp(10)));
+				
+				data.setUpdatedBy(employeeDAO.findEmployeeByCode(rs.getString(11)));
+				data.setLastModifedDate(DateUtil.convertDate(rs.getTimestamp(12)));
 				expList.add(data);
 			}
 		} catch (SQLException e) {

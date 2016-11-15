@@ -47,7 +47,7 @@ public class DefaultProductService implements ProductService {
 	
 	private void createInventoryEntryForProduct(InventoryEntryData entry, Connection connection) {
 		PreparedStatement ps = null;
-		String sql = "INSERT INTO INVENTORY_ENTRY (INVENTORY_CODE, CREATED_DATE, QUANTITY_ADDED, QUANTITY_REDUCED, QUANTITY_RESERVED, QUANTITY_DAMAGED, CREATED_BY) VALUES(?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO INVENTORY_ENTRY (INVENTORY_CODE, CREATED_DATE, QUANTITY_ADDED, QUANTITY_REDUCED, QUANTITY_RESERVED, QUANTITY_DAMAGED, LAST_MODIFIED_BY) VALUES(?,?,?,?,?,?,?)";
 		try {
 			ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, entry.getInventory().getCode());
@@ -56,7 +56,7 @@ public class DefaultProductService implements ProductService {
 			ps.setDouble(4, Double.valueOf("0.0")); //Product Update - reduced Quantity is Zero
 			ps.setDouble(5, entry.getReservedQuantity());
 			ps.setDouble(6, entry.getDamagedQuantity());
-			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getProperty("CURRENT_USER");
+			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
 			ps.setString(7, currentUser.getUserId());
 			
 			int rowCount = ps.executeUpdate();
@@ -87,13 +87,17 @@ public class DefaultProductService implements ProductService {
 			inventoryHeader.setTotalReservedQuantity(inventoryHeader.getTotalReservedQuantity() + inventoryEntry.getReservedQuantity());
 			inventoryHeader.setTotalDamagedQuantity(inventoryHeader.getTotalDamagedQuantity() + inventoryEntry.getDamagedQuantity());
 			
-			sql = "UPDATE INVENTORY SET TOTAL_AVAILABLE_QUANTITY=?, TOTAL_RESERVED_QUANTITY=?, TOTAL_DAMAGED_QUANTITY=?, LAST_UPDATED_DATE=? WHERE PRODUCT_CODE=?";			
+			sql = "UPDATE INVENTORY SET TOTAL_AVAILABLE_QUANTITY=?, TOTAL_RESERVED_QUANTITY=?, TOTAL_DAMAGED_QUANTITY=?, LAST_UPDATED_DATE=?, LAST_MODIFIED_BY = ? WHERE PRODUCT_CODE=?";			
 			ps = connection.prepareStatement(sql);
 			ps.setDouble(1, inventoryHeader.getTotalAvailableQuantity());
 			ps.setDouble(2, inventoryHeader.getTotalReservedQuantity());
 			ps.setDouble(3, inventoryHeader.getTotalDamagedQuantity());
 			ps.setTimestamp(4, DateUtil.createCurrentTimeStamp());
-			ps.setString(5, inventoryHeader.getProduct().getCode());
+			
+			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
+			ps.setString(5, currentUser.getUserId());
+			
+			ps.setString(6, inventoryHeader.getProduct().getCode());
 			int rowCount = ps.executeUpdate();
 			if(rowCount > 0) {
 				connection.commit();
