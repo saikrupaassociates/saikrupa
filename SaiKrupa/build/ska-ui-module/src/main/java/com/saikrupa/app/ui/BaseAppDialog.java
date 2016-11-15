@@ -22,7 +22,7 @@ import com.alee.managers.notification.WebNotification;
 public class BaseAppDialog extends WebDialog {
 
 	/**
-	 * 
+	 * Base Class
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -139,7 +139,7 @@ public class BaseAppDialog extends WebDialog {
 		NotificationManager.showNotification(notificationPopup);
 		clock.start();
 	}
-	
+
 	public void showFailureNotification() {
 		final WebNotification notificationPopup = new WebNotification();
 		notificationPopup.setIcon(NotificationIcon.plus);
