@@ -1,2 +1,0 @@
-mvn archetype:generate -DgroupId=com.saikrupa -DartifactId=ska-ui-module -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false 
-mvn archetype:generate -DgroupId=com.saikrupa -DartifactId=ska-service-module -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false

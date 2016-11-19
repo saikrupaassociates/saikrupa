@@ -1,7 +1,0 @@
-mvn install:install-file -DgroupId=com.hybris.datahub -DartifactId=datahub-extension-archetype -Dversion=5.7.0.0-RC5 -Dpackaging=jar -Dfile=datahub-extension-archetype-5.7.0.0-RC5.jar -DgeneratePom=true
-mvn install:install-file -DgroupId=com.hybris.datahub -DartifactId=datahub-extension-sdk -Dversion=5.7.0.0-RC5 -Dpackaging=jar -Dfile=datahub-extension-sdk-5.7.0.0-RC5.jar -DgeneratePom=true
-mvn archetype:generate -DarchetypeGroupId=com.hybris.datahub -DarchetypeArtifactId=datahub-extension-archetype -DarchetypeVersion=5.7.0.0-RC5 -DgroupId=com.prasun.datahub.sample -DartifactId=mynewtarget-datahub -DsdkVersion=5.7.0.0-RC5
-
-
-mvn install:install-file -DgroupId=com.hybris.datahub -DartifactId=sapidocoutboundadapter -Dversion=5.7.0.0-RC15 -Dpackaging=jar -Dfile=sapidocoutboundadapter-5.7.0.0-RC15.jar -DgeneratePom=true
-mvn install:install-file -DgroupId=com.hybris.datahub -DartifactId=sapidocintegration -Dversion=5.7.0.0-RC15 -Dpackaging=jar -Dfile=sapidocintegration-5.7.0.0-RC15.jar -DgeneratePom=true
