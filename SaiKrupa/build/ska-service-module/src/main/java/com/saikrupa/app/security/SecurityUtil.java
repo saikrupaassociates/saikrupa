@@ -46,12 +46,9 @@ public class SecurityUtil {
     
     public static void main(String[] test) {
     	String password = "nimda";
-    	System.out.println("Password : "+password);
     	try {
 			String encPassword = SecurityUtil.encrypt(password);
-			System.out.println("Encrypted Password : "+encPassword);
 			String decPassword = SecurityUtil.decrypt(encPassword);
-			System.out.println("Decrypted Password : "+decPassword);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

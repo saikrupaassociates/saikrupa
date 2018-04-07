@@ -12,6 +12,7 @@ import com.saikrupa.app.dao.EmployeeDAO;
 import com.saikrupa.app.dao.ProductDAO;
 import com.saikrupa.app.db.PersistentManager;
 import com.saikrupa.app.dto.InventoryData;
+import com.saikrupa.app.dto.InventoryEntryData;
 import com.saikrupa.app.dto.PriceRowData;
 import com.saikrupa.app.dto.ProductData;
 import com.saikrupa.app.service.ProductPriceService;
@@ -132,5 +133,34 @@ public class DefaultProductDAO implements ProductDAO {
 			e.printStackTrace();
 		}
 		return (invList.isEmpty() ? null : invList.get(0));
+	}
+
+	public List<InventoryEntryData> findInventoryHistoryForAllProduct() {
+		final String sql = "SELECT CODE, CREATED_DATE, QUANTITY_ADDED, QUANTITY_REDUCED, QUANTITY_DAMAGED, LABOUR_PAYMENT_STATUS  FROM INVENTORY_ENTRY WHERE INVENTORY_CODE=? AND QUANTITY_ADDED > 0 order by created_date desc";
+		PersistentManager manager = PersistentManager.getPersistentManager();
+		Connection connection = manager.getConnection();
+		List<InventoryEntryData> invList = new ArrayList<InventoryEntryData>();
+		
+		for(ProductData productData : findAllProducts()) {
+			try {
+				PreparedStatement ps = connection.prepareStatement(sql);
+				ps.setString(1, productData.getCode());
+				ResultSet rs = ps.executeQuery();
+				while (rs.next()) {
+					InventoryEntryData data = new InventoryEntryData();
+					data.setCode(rs.getInt(1));
+					data.setCreatedDate(DateUtil.convertDate(rs.getTimestamp(2)));
+					data.setAddedQuantity(rs.getDouble(3));					
+					data.setDamagedQuantity(rs.getDouble(5));
+					data.setInventory(findInventoryLevelByProduct(productData));
+					data.setLabourPaymentStatus(rs.getInt(6));
+					invList.add(data);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return invList;
 	}
 }

@@ -1,5 +1,7 @@
 package com.saikrupa.app.dto;
 
+import java.util.List;
+
 public class OrderEntryData {
 	
 	private int entryNumber;
@@ -10,6 +12,8 @@ public class OrderEntryData {
 	private Double discount;
 	private String entryNote;
 	private OrderData order;
+	
+	private List<PaymentEntryData> paymentEntries;
 	
 	private int code;
 	private DeliveryData deliveryData;
@@ -129,6 +133,14 @@ public class OrderEntryData {
 
 	public void setDeliveryAddress(AddressData deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
+	}
+
+	public List<PaymentEntryData> getPaymentEntries() {
+		return paymentEntries;
+	}
+
+	public void setPaymentEntries(List<PaymentEntryData> paymentEntries) {
+		this.paymentEntries = paymentEntries;
 	}
 
 }

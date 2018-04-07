@@ -40,8 +40,8 @@ public class DefaultCustomerService implements CustomerService {
 				customer.setCode(records.getString(1));
 				customer.setName(records.getString(2));
 				customer.setPrimaryContact(records.getString(3));
-				AddressData address = getCustomerDeliveryAddressByCode(customer.getCode());
-				customer.setAddress(address);
+				//AddressData address = getCustomerDeliveryAddressByCode(customer.getCode());
+				//customer.setAddress(address);
 				customerList.add(customer);
 			}
 		} catch (SQLException e) {

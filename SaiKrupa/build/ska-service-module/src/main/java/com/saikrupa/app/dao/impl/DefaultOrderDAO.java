@@ -11,10 +11,12 @@ import com.saikrupa.app.dao.OrderDAO;
 import com.saikrupa.app.dao.ProductDAO;
 import com.saikrupa.app.db.PersistentManager;
 import com.saikrupa.app.dto.AddressData;
+import com.saikrupa.app.dto.AddressType;
 import com.saikrupa.app.dto.DeliveryData;
 import com.saikrupa.app.dto.DeliveryStatus;
 import com.saikrupa.app.dto.OrderData;
 import com.saikrupa.app.dto.OrderEntryData;
+import com.saikrupa.app.dto.PaymentEntryData;
 import com.saikrupa.app.dto.PaymentStatus;
 import com.saikrupa.app.util.OrderUtil;
 
@@ -44,6 +46,35 @@ public class DefaultOrderDAO implements OrderDAO {
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return orderList;
+	}
+	
+	public List<OrderData> findOrdersByCustomer(Integer customerCode) {
+		List<OrderData> orderList = new ArrayList<OrderData>();
+		final String sql = "SELECT CODE, ORDER_STATUS, PAYMENT_STATUS, DELIVERY_STATUS, CUSTOMER_CODE, CREATED_DATE FROM COM_ORDER WHERE CUSTOMER_CODE = ? ORDER BY CREATED_DATE DESC";
+
+		PersistentManager manager = PersistentManager.getPersistentManager();
+		Connection connection = manager.getConnection();
+		CustomerDAO customerDAO = new DefaultCustomerDAO();
+		try {
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setInt(1, customerCode.intValue());
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				OrderData data = new OrderData();
+				data.setCode(rs.getString(1));
+				data.setOrderStatus(OrderUtil.getOrderStatusByCode(rs.getInt(2)));
+				data.setPaymentStatus(OrderUtil.getPaymentStatusByCode(rs.getInt(3)));
+				data.setDeliveryStatus(OrderUtil.getDeliveryStatusByCode(rs.getInt(4)));
+				data.setCustomer(customerDAO.findCustomerByCode(rs.getString(5)));
+				data.setCreatedDate((java.util.Date) rs.getDate(6));
+				data.setOrderEntries(getOrderEntries(data));
+				updateOrderTotalPrice(data);				
+				orderList.add(data);
+			}
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return orderList;
@@ -85,6 +116,7 @@ public class DefaultOrderDAO implements OrderDAO {
 				AddressData deliveryAddressData = findDeliveryAddressForEntry(data);
 				data.setDeliveryAddress(deliveryAddressData);
 				data.getOrder().setDeliveryAddress(deliveryAddressData);
+				data.setPaymentEntries(getPaymentEntries(data));
 				orderEntries.add(data);
 			}
 		} catch (SQLException e) {
@@ -166,15 +198,16 @@ public class DefaultOrderDAO implements OrderDAO {
 					+ " AND E.ENTRY_NO = D.ENTRY_NO"
 					+ " AND D.ORDER_CODE = O.CODE"
 					+ " AND E.QUANTITY <> D.DELIVERED_QUANTITY";			
-		} else if(condition.equals("REPORT_ORDER_BY_CUSTOMER")) {
+		} else if(condition.equals("REPORT_ORDER_BY_CUSTOMER") || condition.equalsIgnoreCase("MANAGE_ORDER_CUSTOMER")) {
 			searchQuery = "SELECT O.CODE, O.ORDER_STATUS, O.PAYMENT_STATUS, O.DELIVERY_STATUS, O.CUSTOMER_CODE, O.CREATED_DATE, O.CREATED_BY"
 					+ " FROM COM_ORDER O "
 					+ " WHERE O.CUSTOMER_CODE = ?";
 
 		} else if(condition.equals("REPORT_ORDER_CONSOLIDATED")) {
 			searchQuery = "SELECT O.CODE, O.ORDER_STATUS, O.PAYMENT_STATUS, O.DELIVERY_STATUS, O.CUSTOMER_CODE, O.CREATED_DATE, O.CREATED_BY"
-					+ " FROM COM_ORDER O ";
-		}
+					+ " FROM COM_ORDER O ";		
+		}		
+		
 		if(searchQuery == null || searchQuery.trim().length() < 1) {
 			searchQuery = "SELECT CODE, ORDER_STATUS, PAYMENT_STATUS, DELIVERY_STATUS, CUSTOMER_CODE, CREATED_DATE "
 			 		+ "FROM COM_ORDER "
@@ -187,7 +220,7 @@ public class DefaultOrderDAO implements OrderDAO {
 		CustomerDAO customerDAO = new DefaultCustomerDAO();
 		try {
 			PreparedStatement ps = connection.prepareStatement(searchQuery);
-			if(condition.equals("REPORT_ORDER_BY_CUSTOMER")) {
+			if(condition.equals("REPORT_ORDER_BY_CUSTOMER") || condition.equals("MANAGE_ORDER_CUSTOMER")) {
 				if(params != null) {
 					Integer param = (Integer) params[0];
 					ps.setInt(1, param);
@@ -203,7 +236,7 @@ public class DefaultOrderDAO implements OrderDAO {
 				data.setCustomer(customerDAO.findCustomerByCode(rs.getString(5)));
 				data.setCreatedDate((java.util.Date) rs.getDate(6));
 				data.setOrderEntries(getOrderEntries(data));
-				data.setDeliveryAddress(data.getCustomer().getAddress());
+				data.setDeliveryAddress(findDeliveryAddressForOrderEntry(data.getOrderEntries().get(0).getCode()));
 				updateOrderTotalPrice(data);
 				orderList.add(data);
 			}
@@ -212,6 +245,63 @@ public class DefaultOrderDAO implements OrderDAO {
 			e.printStackTrace();
 		}
 		return orderList;
+	}
+	
+	public AddressData findDeliveryAddressForOrderEntry(Integer entryCode) {
+		final String sql = "SELECT ADDRESS_CODE,ADDRESS_LINE1,ADDRESS_LINE2,ADDRESS_LINE3,ADDRESS_LANDMARK,ADDRESS_ZIP,ORDER_ENTRY_CODE,ADDRESS_TYPE "
+				+ "FROM COM_ORDER_DELIVERY_ADDRESS WHERE ORDER_ENTRY_CODE = ?";
+		
+		AddressData data = null;
+		PersistentManager manager = PersistentManager.getPersistentManager();
+		Connection connection = manager.getConnection();
+		try {
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setInt(1, entryCode);			
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				data = new AddressData();
+				data.setCode(rs.getString(1));
+				data.setLine1(rs.getString(2));
+				data.setLine2(rs.getString(3));
+				data.setLandmark(rs.getString(4));
+				data.setZipCode(rs.getString(5));
+				data.setAddressType(AddressType.DELIVERY);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return data;
+	}
+	
+	
+
+	public List<PaymentEntryData> getPaymentEntries(OrderEntryData entry) {
+		final String sql = "SELECT CODE, PAYMENT_ENTRY_NO, PAYABLE_AMOUNT, PAID_AMOUNT, PAYMENT_DATE, "
+				+ "PAYMENT_ENTRY_PAYMENT_STATUS "
+				+ "FROM COM_ORDER_PAYMENT_ENTRY WHERE ORDER_ENTRY_CODE = ?";
+		
+		List<PaymentEntryData> list = new ArrayList<PaymentEntryData>();
+		PersistentManager manager = PersistentManager.getPersistentManager();
+		Connection connection = manager.getConnection();
+		try {
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setInt(1, entry.getCode());
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				PaymentEntryData paymentEntryData = new PaymentEntryData();
+				paymentEntryData.setCode(rs.getInt(1));
+				paymentEntryData.setEntryNumber(rs.getInt(2));
+				paymentEntryData.setPayableAmount(rs.getDouble(3));
+				paymentEntryData.setAmount(rs.getDouble(4));				
+				paymentEntryData.setPaymentDate(new java.sql.Date(rs.getDate(5).getTime()));
+				paymentEntryData.setPaymentStatus(OrderUtil.getPaymentStatusByCode(rs.getInt(6)));
+				paymentEntryData.setOrderEntryData(entry);
+				list.add(paymentEntryData);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+		return list;
 	}
 
 }

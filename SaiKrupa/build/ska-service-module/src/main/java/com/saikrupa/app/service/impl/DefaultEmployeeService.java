@@ -133,8 +133,7 @@ public class DefaultEmployeeService implements EmployeeService {
 				}
 			}
 		} else {
-			connection.rollback();
-			System.out.println("updateEmployee :: Update Failed");
+			connection.rollback();			
 		}
 	}
 

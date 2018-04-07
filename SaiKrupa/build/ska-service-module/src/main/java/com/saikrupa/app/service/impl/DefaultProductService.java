@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import com.saikrupa.app.db.PersistentManager;
 import com.saikrupa.app.dto.ApplicationUserData;
@@ -51,7 +52,7 @@ public class DefaultProductService implements ProductService {
 		try {
 			ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, entry.getInventory().getCode());
-			ps.setTimestamp(2, DateUtil.createCurrentTimeStamp());
+			ps.setTimestamp(2, new java.sql.Timestamp(entry.getCreatedDate().getTime()));
 			ps.setDouble(3, entry.getAddedQuantity());
 			ps.setDouble(4, Double.valueOf("0.0")); //Product Update - reduced Quantity is Zero
 			ps.setDouble(5, entry.getReservedQuantity());
@@ -92,7 +93,7 @@ public class DefaultProductService implements ProductService {
 			ps.setDouble(1, inventoryHeader.getTotalAvailableQuantity());
 			ps.setDouble(2, inventoryHeader.getTotalReservedQuantity());
 			ps.setDouble(3, inventoryHeader.getTotalDamagedQuantity());
-			ps.setTimestamp(4, DateUtil.createCurrentTimeStamp());
+			ps.setTimestamp(4, new java.sql.Timestamp(inventoryEntry.getCreatedDate().getTime()));
 			
 			ApplicationUserData currentUser = (ApplicationUserData)ApplicationSession.getSession().getCurrentUser();
 			ps.setString(5, currentUser.getUserId());

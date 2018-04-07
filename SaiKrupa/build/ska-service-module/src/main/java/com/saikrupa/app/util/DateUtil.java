@@ -30,8 +30,14 @@ public class DateUtil {
 		if(date == null) {
 			return "N/A";
 		}		
-		
 		return convertToString("dd-MMM-yyyy HH:mm:ss", date);
+	}
+
+	public static String simpleDateText(Date date) {
+		if(date == null) {
+			return "N/A";
+		}		
+		return convertToString("dd MMM yyyy", date);
 	}
 	
 	public static java.util.Date convertDate(java.sql.Date sqlDate) {

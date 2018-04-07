@@ -136,7 +136,7 @@ public class UpdateOrderDialog extends BaseAppDialog {
 
 		final WebLabel orderAmountLabel = new WebLabel(String.valueOf(data.getTotalPrice()));
 		orderAmountLabel.setFont(applyLabelFont());
-		orderAmountLabel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+		//orderAmountLabel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 
 		c.gridx = 3;
 		c.gridy = 0;
@@ -214,10 +214,6 @@ public class UpdateOrderDialog extends BaseAppDialog {
 
 		WebLabel orderStatusLabel = new WebLabel(data.getOrderStatus().toString());
 		orderStatusLabel.setFont(applyLabelFont());
-		
-		if(data.getOrderStatus() == OrderStatus.COMPLETED) {
-			orderStatusLabel.setForeground(Color.GREEN);
-		}
 
 		c.gridx = 5;
 		c.gridy = 1;
@@ -277,15 +273,7 @@ public class UpdateOrderDialog extends BaseAppDialog {
 		ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (e.getActionCommand().equalsIgnoreCase("LOOKUP_PAYMENT_STATUS")) {
-					PaymentStatus[] paymentStatuses = { PaymentStatus.PAID, PaymentStatus.PENDING };
-					PaymentStatus selected = (PaymentStatus) WebOptionPane.showInputDialog(UpdateOrderDialog.this,
-							"Payment Status", "Select Payment Status", WebOptionPane.QUESTION_MESSAGE, null,
-							paymentStatuses, getCurrentOrder().getPaymentStatus());
-					if (selected != null && getCurrentOrder().getPaymentStatus() != selected) {
-						paymentStatusLabel.setText(selected.toString());
-						getCurrentOrder().setPaymentStatus(selected);
-					}
-
+					displayPartialSplitPaymentDialog();
 				} else if (e.getActionCommand().equalsIgnoreCase("LOOKUP_DELIVERY_STATUS")) {
 					DeliveryStatus[] deliveryStatuses = { DeliveryStatus.SHIPPED, DeliveryStatus.SHIPPING };
 					DeliveryStatus selected = (DeliveryStatus) WebOptionPane.showInputDialog(UpdateOrderDialog.this,
@@ -299,12 +287,12 @@ public class UpdateOrderDialog extends BaseAppDialog {
 						deliveryStatusLabel.setText(selected.toString());
 					}
 				} else if (e.getActionCommand().equalsIgnoreCase("UPDATE_ORDER")) {
-					updateOrderData(owner);
-					dispose();
+					updateOrderData(owner);					
 				} else if (e.getActionCommand().equalsIgnoreCase("CANCEL")) {
 					dispose(); 
 				} else if (e.getActionCommand().equalsIgnoreCase("SHOW_DELIVERY_DETAIL")) {
 					displayDeliveryDetailDialog();
+					 
 				}
 			}			
 		};
@@ -315,7 +303,7 @@ public class UpdateOrderDialog extends BaseAppDialog {
 		paymentStatusLookupBtn.addActionListener(listener);
 		
 		if (data.getPaymentStatus() == PaymentStatus.PAID) {
-			paymentStatusLookupBtn.setEnabled(false);
+			paymentStatusLookupBtn.setIcon(createImageIcon("info.png"));
 			
 		}
 		if (data.getDeliveryStatus() == DeliveryStatus.SHIPPED) {
@@ -333,8 +321,20 @@ public class UpdateOrderDialog extends BaseAppDialog {
 		// setResizable(false);
 	}
 	
+	private void displayPartialSplitPaymentDialog() {
+		lineDetailTable.setSelectedRow(0);
+		int selectedLine = lineDetailTable.getSelectedRow();
+		OrderEntryTableModel entryTableModel = (OrderEntryTableModel) lineDetailTable.getModel();
+		OrderEntryData orderEntry = entryTableModel.getOrderEntryDataList().get(selectedLine);
+		UpdateOrderPaymentDialog dialog = new UpdateOrderPaymentDialog(this, orderEntry);
+		dialog.setVisible(true);
+		entryTableModel.fireTableDataChanged();
+		paymentStatusLabel.setText(getCurrentOrder().getPaymentStatus().name());
+		revalidate();
+	}
+	
 	private void displayDeliveryDetailDialog() {
-		DisplayOrderDeliveryInfoDialog dialog = new DisplayOrderDeliveryInfoDialog(getParentFrame() , getCurrentOrder().getOrderEntries().get(0));
+		DisplayOrderDeliveryInfoDialog dialog = new DisplayOrderDeliveryInfoDialog(this , getCurrentOrder().getOrderEntries().get(0));
 		dialog.setVisible(true);
 	}
 
@@ -347,7 +347,7 @@ public class UpdateOrderDialog extends BaseAppDialog {
 		dialog.setVisible(true);
 	}
 
-	private void updateOrderData(SKAMainApp owner) {
+	public void updateOrderData(SKAMainApp owner) {
 		getCurrentOrder().setPaymentStatus(PaymentStatus.valueOf(paymentStatusLabel.getText()));
 		getCurrentOrder().setDeliveryStatus(DeliveryStatus.valueOf(deliveryStatusLabel.getText()));
 
@@ -355,15 +355,14 @@ public class UpdateOrderDialog extends BaseAppDialog {
 			getCurrentOrder().setOrderStatus(OrderStatus.CONFIRMED);
 		}
 
-		if (getCurrentOrder().getPaymentStatus() == PaymentStatus.PENDING) {
+		if (getCurrentOrder().getPaymentStatus() == PaymentStatus.PENDING || getCurrentOrder().getPaymentStatus() == PaymentStatus.PARTIAL) {
 			getCurrentOrder().setOrderStatus(OrderStatus.CREATED);
 		}
 		if (getCurrentOrder().getDeliveryStatus() == DeliveryStatus.SHIPPED) {
 			getCurrentOrder().setOrderStatus(OrderStatus.DELIVERED);
 		}
 
-		if (getCurrentOrder().getDeliveryStatus() == DeliveryStatus.SHIPPED
-				&& getCurrentOrder().getPaymentStatus() == PaymentStatus.PAID) {
+		if (getCurrentOrder().getDeliveryStatus() == DeliveryStatus.SHIPPED && getCurrentOrder().getPaymentStatus() == PaymentStatus.PAID) {
 			getCurrentOrder().setOrderStatus(OrderStatus.COMPLETED);
 		}
 		processUpdateOrderEvent(owner);
@@ -373,8 +372,9 @@ public class UpdateOrderDialog extends BaseAppDialog {
 		try {
 			OrderService service = new DefaultOrderService();
 			service.updateOrderStatus(getCurrentOrder());
-			dispose();
 			showSuccessNotification();
+			owner.updateOrderSummary();
+			dispose();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -203,7 +203,7 @@ public class AddOrderEntryPanel extends AppWebPanel {
 		layout.setConstraints(orderQuantityText, c);
 		productDetailPanel.add(orderQuantityText);
 		
-		WebLabel l6 = new WebLabel("Unit Price (each) : ", SwingConstants.RIGHT);
+		WebLabel l6 = new WebLabel("Unit Price : ", SwingConstants.RIGHT);
 		l6.setFont(applyLabelFont());
 		priceText = new WebTextField(10);
 
@@ -327,6 +327,7 @@ public class AddOrderEntryPanel extends AppWebPanel {
 							}
 							totalOrderCostLabel.setText(String.valueOf(order.getTotalPrice()));
 							addToOrderButton.setEnabled(true);
+							calculateButton.setEnabled(false);
 						}						
 					}					
 				}
@@ -346,10 +347,10 @@ public class AddOrderEntryPanel extends AppWebPanel {
 					entry.setPrice(Double.valueOf(priceText.getText()));
 					entry.setTransportationCost(transportationCostText.getText().isEmpty() ? 0 : Double.valueOf(transportationCostText.getText()));					
 					order.getOrderEntries().add(entry);
-					entry.setEntryNumber(order.getOrderEntries().size());
-					nextButton.setEnabled(true);
+					entry.setEntryNumber(order.getOrderEntries().size());					
 					updateOrderEntryTableModel(entry);
 					addToOrderButton.setEnabled(false);
+					nextButton.setEnabled(true);
 				}
 				if(paramActionEvent.getSource() == nextButton) {
 					owner.setOrderData(order);
@@ -399,7 +400,7 @@ public class AddOrderEntryPanel extends AppWebPanel {
 	
 	private void performselectionDetail(Object selectedItem) {	
 		ProductData product = (ProductData) selectedItem;
-		if(product == null) {
+		if(product == null || product.getCode().equals("dummy")) {
 			return;
 		}
 		codeLabel.setText(product.getCode());
@@ -412,7 +413,7 @@ public class AddOrderEntryPanel extends AppWebPanel {
 			priceText.setText("");
 		}
 		productDetailPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Product Info", SwingConstants.CENTER, SwingConstants.CENTER, applyLabelFont()));
-		add(productDetailPanel, BorderLayout.WEST);
+		add(productDetailPanel, BorderLayout.CENTER);
 		revalidate();
 	}
 	

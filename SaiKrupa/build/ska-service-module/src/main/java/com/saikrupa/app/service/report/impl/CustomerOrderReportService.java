@@ -60,7 +60,9 @@ public class CustomerOrderReportService extends AbstractReportService {
 			ReportTableDataCell data_quantity = new ReportTableDataCell(Double.valueOf(data.getOrderEntries().get(0).getOrderedQuantity()), CellValueType.QUANTITY);
 			ReportTableDataCell data_amount = new ReportTableDataCell(data.getTotalPrice(), CellValueType.AMOUNT);			
 			ReportTableDataCell data_paymentStatus = new ReportTableDataCell(data.getPaymentStatus().toString(), CellValueType.TEXT);
-			ReportTableDataCell data_deliveryStatus = new ReportTableDataCell(data.getDeliveryStatus().toString(), CellValueType.TEXT);
+			String delivery = data.getDeliveryStatus().toString() +" ("+data.getDeliveryAddress().getLine1()+")";
+			ReportTableDataCell data_deliveryStatus = new ReportTableDataCell(delivery, CellValueType.TEXT);
+			data_deliveryStatus.setColspan(2);
 			
 			dataTable.addCell(data_OrderNo);
 			dataTable.addCell(data_OrderDate);

@@ -17,7 +17,7 @@ public class ProductSelectionModel extends DefaultComboBoxModel<ProductData> {
 
 	public ProductSelectionModel() {
 		super();
-		getProductData();
+		getProductData();		
 	}
 	
 	private void getProductData() {			
@@ -26,8 +26,12 @@ public class ProductSelectionModel extends DefaultComboBoxModel<ProductData> {
 		for(int i = 0; i < dataList.size(); i++) {
 			ProductData data = dataList.get(i);
 			addElement(data);
-		}		
-		insertElementAt(new ProductData(), 0);
+		}
+		ProductData dummy = new ProductData();
+		dummy.setCode("dummy");
+		dummy.setName("Select a Product");
+		insertElementAt(dummy, 0);
+		setSelectedItem(dummy);
 	}
 	
 	@Override

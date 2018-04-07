@@ -59,6 +59,10 @@ public class ManageExpenseDialog extends BaseAppDialog {
 	private WebTextArea area;
 	private WebButton expenseButton;
 	private WebLabel expCodeLabel;
+	
+	public ManageExpenseDialog() {
+		
+	}
 
 	public ManageExpenseDialog(SKAMainApp owner) {
 		super(owner, true);
@@ -323,8 +327,13 @@ public class ManageExpenseDialog extends BaseAppDialog {
 		ExpenseService service = new DefaultExpenseService();
 		try {
 			ExpenseData insertedExpense = service.createExpense(expenseData);
+			if(owner.getExpenseContentTable() == null) {
+				ExpenseDAO expenseDAO = new DefaultExpenseDAO();
+				ExpenseTableModel model = new ExpenseTableModel(expenseDAO.findAllExpenses());
+				owner.getExpenseContentTable().setModel(model);
+			}
 			ExpenseTableModel model = (ExpenseTableModel) owner.getExpenseContentTable().getModel();
-			model.getExpenseDataList().add(insertedExpense);
+			model.getExpenseDataList().add(0, insertedExpense);
 			model.fireTableDataChanged();
 			showSuccessNotification();
 		} catch (Exception e) {

@@ -33,11 +33,12 @@ public class ManageOrderDialog extends BaseAppDialog {
 	private SKAMainApp mainApp;
 
 	public ManageOrderDialog(SKAMainApp owner) {
-		super(owner, true);
+		super(owner);
 		setMainApp(owner);
 		setTitle("Create New Order...");
 		buildUI();
-		setDefaultCloseOperation(WebDialog.DISPOSE_ON_CLOSE);			
+		setDefaultCloseOperation(WebDialog.DISPOSE_ON_CLOSE);
+		setLocationRelativeTo(owner);
 		setResizable(false);
 	}	
 	
@@ -89,6 +90,7 @@ public class ManageOrderDialog extends BaseAppDialog {
 		model.setOrderDataList(dao.findAllOrders());
 		model.fireTableDataChanged();
 		showSuccessNotification();
+		getMainApp().updateOrderSummary();
 
 	}
 

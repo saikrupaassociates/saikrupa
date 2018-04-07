@@ -47,6 +47,17 @@ public class PersistentManager {
 		return persistentManager;
 	}
 	
+	public String getDatabaseName() {
+		try {
+			ResourceBundle bundle = ResourceBundle.getBundle("database");
+			String entry = bundle.getString("database.connection.string");
+			return entry.substring(entry.lastIndexOf("/")+1, entry.length());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public void closeConnection() {
 		if(connection != null) {
 			try {

@@ -6,10 +6,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
 
 import javax.swing.BorderFactory;
 import javax.swing.SwingConstants;
 
+import com.alee.extended.date.WebDateField;
 import com.alee.extended.layout.VerticalFlowLayout;
 import com.alee.extended.panel.GroupPanel;
 import com.alee.extended.window.WebPopOver;
@@ -17,6 +19,7 @@ import com.alee.laf.button.WebButton;
 import com.alee.laf.label.WebLabel;
 import com.alee.laf.panel.WebPanel;
 import com.alee.laf.rootpane.WebDialog;
+import com.alee.laf.table.WebTable;
 import com.alee.laf.text.WebTextField;
 import com.saikrupa.app.dao.ProductDAO;
 import com.saikrupa.app.dao.impl.DefaultProductDAO;
@@ -26,6 +29,7 @@ import com.saikrupa.app.dto.ProductData;
 import com.saikrupa.app.service.ProductService;
 import com.saikrupa.app.service.impl.DefaultProductService;
 import com.saikrupa.app.ui.component.AppWebLabel;
+import com.saikrupa.app.ui.models.InventoryHistoryModel;
 import com.saikrupa.app.ui.models.ProductTableModel;
 import com.saikrupa.app.util.DateUtil;
 
@@ -150,7 +154,8 @@ public class ManageProductDialog extends BaseAppDialog {
 
 		WebLabel l6 = new WebLabel("Status As on : ", SwingConstants.RIGHT);
 		l6.setFont(applyLabelFont());
-		final WebLabel statusDateText = new WebLabel(DateUtil.convertToString("dd-MMM-yyyy", data.getInventory().getLastUpdatedDate()));
+		final WebDateField statusDateText = new WebDateField(data.getInventory().getLastUpdatedDate());
+		//final WebLabel statusDateText = new WebLabel(DateUtil.convertToString("dd-MMM-yyyy", data.getInventory().getLastUpdatedDate()));
 
 		c.gridx = 0;
 		c.gridy = 5;
@@ -263,6 +268,15 @@ public class ManageProductDialog extends BaseAppDialog {
 							entryData.setAddedQuantity(Double.valueOf(addedQuantityText.getText()));
 							entryData.setReservedQuantity(Double.valueOf(reservedQuantityText.getText()));
 							entryData.setDamagedQuantity(Double.valueOf(rejectedQuantityText.getText()));
+							entryData.setCreatedDate(statusDateText.getDate());
+							Calendar cal = Calendar.getInstance();
+							cal.setTimeInMillis(entryData.getCreatedDate().getTime());
+							cal.add(Calendar.HOUR, 23);
+							cal.add(Calendar.MINUTE, 59);
+							cal.add(Calendar.SECOND, 59);
+							entryData.setCreatedDate(cal.getTime());
+							
+							System.out.println("Product : "+entryData.getInventory().getProduct().getCode()+" added with Quantity : "+entryData.getAddedQuantity() +" On Date : "+entryData.getCreatedDate());
 							processUpdateProductEvent(entryData, owner);
 						}
 					}
@@ -293,19 +307,21 @@ public class ManageProductDialog extends BaseAppDialog {
 	protected void processUpdateProductEvent(InventoryEntryData data, SKAMainApp owner) {
 		ProductService productService = new DefaultProductService();
 		try {
-			System.out.println("Updaating Product : "+data.getInventory().getProduct().getName());
 			productService.updateInventory(data);	
 			dispose();
 			ProductTableModel model = (ProductTableModel) owner.getProductContentTable().getModel();
+			InventoryHistoryModel historyModel = (InventoryHistoryModel) owner.getProductInventoryHistoryTable().getModel();  
 			ProductDAO dao = new DefaultProductDAO();
 			model.setProductDataList(dao.findAllProducts());
-			model.fireTableDataChanged();		
+			historyModel.setInventoryDataList(dao.findInventoryHistoryForAllProduct());
+			
+			model.fireTableDataChanged();
+			historyModel.fireTableDataChanged();
 			showSuccessNotification();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 	
 	private boolean isNumeric(String text) { 

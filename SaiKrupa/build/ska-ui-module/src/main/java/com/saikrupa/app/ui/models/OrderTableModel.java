@@ -19,7 +19,7 @@ public class OrderTableModel extends AbstractTableModel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String[] columnNames = { "Code", "Customer", "Order Amount", "Ordered Date", "Order Status", "Delivery Status", "Payment Status", "Delivery Date"};
+	private String[] columnNames = {"Code", "Customer","Location", "Quantity", "Order Amount", "Ordered Date", "Order Status", "Delivery Status", "Payment Status", "Delivery Date"};
 	
 	private List<OrderData> orderDataList;
 
@@ -32,28 +32,31 @@ public class OrderTableModel extends AbstractTableModel {
 	}
 
 	public int getRowCount() {
-		// TODO Auto-generated method stub
 		return orderDataList.size();
 	}
 
 	public Object getValueAt(int row, int col) {
-		// TODO Auto-generated method stub
 		OrderData data = orderDataList.get(row);
 		if(col == 0) {
 			return data.getCode();
 		} else if(col == 1) {
 			return data.getCustomer().getName();
 		} else if(col == 2) {
-			return getFormattedPrice(getOrderTotalValue(data));
+			return data.getDeliveryAddress().getLine1();
 		} else if(col == 3) {
-			return DateUtil.convertToString("dd-MMM-yyyy", data.getCreatedDate());
+			OrderEntryData entry = data.getOrderEntries().get(0); 
+			return entry.getOrderedQuantity();
 		} else if(col == 4) {
-			return data.getOrderStatus().toString();
+			return getFormattedPrice(getOrderTotalValue(data));			
 		} else if(col == 5) {
-			return data.getDeliveryStatus().toString();
+			return DateUtil.convertToString("dd-MMM-yyyy", data.getCreatedDate());
 		} else if(col == 6) {
-			return data.getPaymentStatus().toString();
+			return data.getOrderStatus().toString();
 		} else if(col == 7) {
+			return data.getDeliveryStatus().toString();
+		} else if(col == 8) {
+			return data.getPaymentStatus().toString();
+		} else if(col == 9) {
 			if(data.getOrderEntries().get(0).getDeliveryData() != null) {
 				return DateUtil.convertToString("dd-MMM-yyyy", data.getOrderEntries().get(0).getDeliveryData().getDeliveryDate());
 			}

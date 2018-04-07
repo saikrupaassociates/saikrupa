@@ -27,7 +27,7 @@ public class ITextDummy {
 			addContent();
 		}
 		getDocument().close();
-		System.out.println("Done");
+		System.out.println("Report Generation Completed");
 
 	}
 

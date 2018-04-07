@@ -12,6 +12,7 @@ public class InventoryEntryData {
 	private Double addedQuantity;
 	private Double reservedQuantity;
 	private Double damagedQuantity;
+	private Integer labourPaymentStatus;
 	
 	
 
@@ -64,5 +65,13 @@ public class InventoryEntryData {
 
 	public void setCode(int code) {
 		this.code = code;
+	}
+
+	public Integer getLabourPaymentStatus() {
+		return labourPaymentStatus;
+	}
+
+	public void setLabourPaymentStatus(Integer labourPaymentStatus) {
+		this.labourPaymentStatus = labourPaymentStatus;
 	}
 }

@@ -13,6 +13,8 @@ public class AppWebLabel extends WebLabel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private Object actualValue;
 
 	public AppWebLabel() {
 		applyLabelFont();
@@ -95,6 +97,14 @@ public class AppWebLabel extends WebLabel {
 	
 	public void applyLabelFont() {
 		setFont(new Font("verdana", Font.BOLD, 12));
+	}
+
+	public Object getActualValue() {
+		return actualValue;
+	}
+
+	public void setActualValue(Object actualValue) {
+		this.actualValue = actualValue;
 	}
 
 }

@@ -20,7 +20,7 @@ public class PaymentStatusModel extends DefaultComboBoxModel<PaymentStatus> {
 	}
 	
 	private void getPaymentStatusData() {
-		addElement(PaymentStatus.PAID);
+		//addElement(PaymentStatus.PAID);
 		addElement(PaymentStatus.PENDING);
 	}
 	

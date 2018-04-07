@@ -1,4 +1,5 @@
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Electrical - Transformer Setup','to be updated later');
+INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Electrical - Electricity Bill','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Infrastructure - Shade Material procurement','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Infrastructure - Shade building Labor Charges','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Infrastructure - Construction Material Procurement','to be updated later');
@@ -9,18 +10,18 @@ INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Machinary - Pro
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Machinary - Installation','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Material Procurement','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Material Transportation Cost','to be updated later');
-INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Labor cost','to be updated later');
+INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Labour cost','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Employee Salary','to be updated later');
-INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Machinary Maintenance Cost','to be updated later');
+INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Repair & Maintenance','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Vehicle Maintenance Cost','to be updated later');
-INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Other Expenses','to be updated later');
+INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Operation - Vehicle Fuel Expense','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Travel - Fuel Expense','to be updated later');
 INSERT INTO EXPENSE_CATEGORY(EXP_CAT_NAME, EXP_CAT_DESC) VALUES('Travel - Travel Expense','to be updated later');
 
 
-INSERT INTO PAYMENT_MODE(PAYMEMT_CODE_NAME) VALUE('CASH');
-INSERT INTO PAYMENT_MODE(PAYMEMT_CODE_NAME) VALUE('ON ACCOUNT');
-INSERT INTO PAYMENT_MODE(PAYMEMT_CODE_NAME) VALUE('CREDIT');
+INSERT INTO PAYMENT_MODE(PAYMEMT_CODE_NAME) VALUE('Cash');
+INSERT INTO PAYMENT_MODE(PAYMEMT_CODE_NAME) VALUE('On Account');
+INSERT INTO PAYMENT_MODE(PAYMEMT_CODE_NAME) VALUE('DD / Cheque');
 
 INSERT INTO CONTACT_PERSON_TYPE(TYPE_CODE, TYPE_NAME) VALUE('5001', 'VENDOR');
 INSERT INTO CONTACT_PERSON_TYPE(TYPE_CODE, TYPE_NAME) VALUE('1001', 'INVESTOR');
@@ -33,8 +34,8 @@ INSERT INTO investor(NAME, contact_primary, contact_secondary) VALUES('REENA RAN
 
 
 INSERT INTO product(NAME, description, saleable) VALUES('9 INCH - AUTOMATIC', 'STANDARD 9 INCH BRICK', 0);
-INSERT INTO product(NAME, description, saleable) VALUES('10 INCH - EGL', 'STANDARD 10 INCH BRICK', 0);
-INSERT INTO product(NAME, description, saleable) VALUES('12 INCH BLOCK - EGL', '12 BLOCK BRICK', 0);
+INSERT INTO product(NAME, description, saleable) VALUES('10 INCH - AUTOMATIC', 'STANDARD 10 INCH BRICK', 0);
+INSERT INTO product(NAME, description, saleable) VALUES('12 INCH BLOCK - EGL', '12 INCH BLOCK BRICK', 0);
 
 
 INSERT INTO INVENTORY(TOTAL_AVAILABLE_QUANTITY, TOTAL_RESERVED_QUANTITY, TOTAL_DAMAGED_QUANTITY, PRODUCT_CODE, LAST_UPDATED_DATE, LAST_MODIFIED_BY) VALUES(0,0,0, 1000, CURRENT_DATE(), 'admin');

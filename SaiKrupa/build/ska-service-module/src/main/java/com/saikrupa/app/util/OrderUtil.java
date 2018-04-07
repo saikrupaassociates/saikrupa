@@ -46,6 +46,9 @@ public abstract class OrderUtil {
 		case PENDING:
 			status = 1;
 			break;
+		case PARTIAL:
+			status = 2;
+			break;			
 		default:
 			return -1;
 		}
@@ -66,6 +69,21 @@ public abstract class OrderUtil {
 		}
 		return status;
 	}
+	
+	public static int getDeliveryStatusCode(DeliveryStatus deliveryStatus) {
+		int status = -1;
+		switch (deliveryStatus) {
+		case SHIPPED:
+			status = 0;
+			break;
+		case SHIPPING:
+			status = 1;
+			break;
+		default:
+			return -1;
+		}
+		return status;
+	}	
 	
 	public static OrderStatus getOrderStatusByCode(int code) {
 		OrderStatus status = OrderStatus.CREATED;
@@ -97,6 +115,36 @@ public abstract class OrderUtil {
 		}
 		return status;
 	}
+	
+	public static int getStatusCodeByOrderStatus(OrderStatus status) {
+		int code = -1;
+		switch (status) {		
+		case CREATED:
+			code = 0;
+			break;
+		case PLACED:
+			code = 1;
+			break;
+		case CONFIRMED:
+			code = 2;
+			break;
+		case SHIPPED:
+			code = 3;
+			break;	
+		case SHIPPING:
+			code = 4;
+			break;	
+		case DELIVERED:
+			code = 5;
+			break;	
+		case COMPLETED:
+			code = 6;
+			break;				
+		default:			
+			break;
+		}
+		return code;
+	}
 
 	public static PaymentStatus getPaymentStatusByCode(int code) {
 		PaymentStatus payment = PaymentStatus.PENDING;
@@ -108,11 +156,32 @@ public abstract class OrderUtil {
 		case 1:
 			payment = PaymentStatus.PENDING;
 			break;
+		case 2:
+			payment = PaymentStatus.PARTIAL;
+			break;			
 		default:
 			payment = PaymentStatus.PENDING;
 			break;
 		}
 		return payment;
+	}
+	
+	public static int getCodeByPaymentStatus(PaymentStatus status) {
+		int code = -1;
+		switch (status) {		
+		case PAID:
+			code = 0;
+			break;
+		case PENDING:
+			code = 1;
+			break;
+		case PARTIAL:
+			code = 2;
+			break;			
+		default:			
+			break;
+		}
+		return code;
 	}
 
 	public static DeliveryStatus getDeliveryStatusByCode(int code) {

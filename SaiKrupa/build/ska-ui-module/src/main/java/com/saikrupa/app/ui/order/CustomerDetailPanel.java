@@ -231,6 +231,7 @@ public class CustomerDetailPanel extends AppWebPanel {
 					d.setVisible(true);
 					changeAddressButton.setEnabled(true);
 					resetButton.setEnabled(true);
+					//updateCustomerData(d.performSelectionOperation());
 				} else if(event.getActionCommand().equals("RESET_CUSTOMER")) {
 					resetCustomerData();
 				}  else if(event.getActionCommand().equals("CHANGE_ADDRESS")) {
@@ -298,9 +299,6 @@ public class CustomerDetailPanel extends AppWebPanel {
 			newAddress.setZipCode(pinCodeText.getText());
 			data.setAddress(newAddress);
 		}
-		System.out.println("**********************************************************************");
-		System.out.println("Customer Model : "+data);
-		System.out.println("**********************************************************************");
 		owner.getOrderData().setDeliveryAddress(data.getAddress());
 		owner.getOrderData().getOrderEntries().get(0).setDeliveryAddress(data.getAddress());
 		owner.getOrderData().setCustomer(data);

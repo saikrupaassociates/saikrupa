@@ -26,7 +26,6 @@ public class ConsolidatedOrderReportService extends AbstractReportService {
 	public void saveReport(final String reportName) {
 		Document pdfDocument = createBlankDocument(reportName);
 		pdfDocument.close();
-		System.out.println("Done !!!");
 	}
 
 	@Override
@@ -46,7 +45,7 @@ public class ConsolidatedOrderReportService extends AbstractReportService {
 		ReportTableHeaderCell amount = new ReportTableHeaderCell("Order Total");
 		ReportTableHeaderCell paymentStatus = new ReportTableHeaderCell("Payment");
 		ReportTableHeaderCell deliveryStatus = new ReportTableHeaderCell("Delivery");
-		
+			
 		
 		dataTable.addCell(header_OrderNo);
 		dataTable.addCell(header_customer);
@@ -67,7 +66,11 @@ public class ConsolidatedOrderReportService extends AbstractReportService {
 			ReportTableDataCell data_quantity = new ReportTableDataCell(Double.valueOf(data.getOrderEntries().get(0).getOrderedQuantity()), CellValueType.QUANTITY);
 			ReportTableDataCell data_amount = new ReportTableDataCell(data.getTotalPrice(), CellValueType.AMOUNT);			
 			ReportTableDataCell data_paymentStatus = new ReportTableDataCell(data.getPaymentStatus().toString(), CellValueType.TEXT);
-			ReportTableDataCell data_deliveryStatus = new ReportTableDataCell(data.getDeliveryStatus().toString(), CellValueType.TEXT);
+			//ReportTableDataCell data_deliveryStatus = new ReportTableDataCell(data.getDeliveryStatus().toString(), CellValueType.TEXT);
+			
+			String delivery = data.getDeliveryStatus().toString() +" ("+data.getDeliveryAddress().getLine1()+")";
+			ReportTableDataCell data_deliveryStatus = new ReportTableDataCell(delivery, CellValueType.TEXT);
+			data_deliveryStatus.setColspan(2);
 			
 			
 			dataTable.addCell(data_OrderNo);

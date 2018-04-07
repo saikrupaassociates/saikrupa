@@ -52,12 +52,16 @@ import com.alee.utils.SwingUtils;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 import com.saikrupa.app.dao.impl.DefaultOrderDAO;
+import com.saikrupa.app.dto.EmployeeSalaryData;
 import com.saikrupa.app.dto.InvestmentData;
 import com.saikrupa.app.dto.OrderEntryData;
 import com.saikrupa.app.dto.OrderStatus;
+import com.saikrupa.app.dto.PaymentEntryData;
 import com.saikrupa.app.ui.models.DeliveryStatusModel;
+import com.saikrupa.app.ui.models.EmployeeRevisionTableModel;
 import com.saikrupa.app.ui.models.InvestmentTableModel;
 import com.saikrupa.app.ui.models.OrderEntryTableModel;
+import com.saikrupa.app.ui.models.PaymentEntryTableModel;
 import com.saikrupa.app.ui.models.PaymentStatusModel;
 
 public class TestApp extends WebFrame {
@@ -73,9 +77,142 @@ public class TestApp extends WebFrame {
 
 	public TestApp() {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		// showInputOption();
-		showLogin();
+		testTableDialog();
+		
 	}
+	
+	private void testTableDialog() {
+		WebPanel formPanel = new WebPanel();		
+		GridBagLayout layout = new GridBagLayout();
+		formPanel.setLayout(layout);
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+
+		WebLabel l1 = new WebLabel("Order Number : ", SwingConstants.RIGHT);
+		WebLabel t1 = new WebLabel("3333");
+
+		WebLabel l2 = new WebLabel("Product : ", SwingConstants.RIGHT);
+		WebLabel t2 = new WebLabel("BLA BLA");
+
+		WebLabel l3 = new WebLabel("Total Payable Amount : ", SwingConstants.RIGHT);
+		WebLabel t3 = new WebLabel("44");
+		
+		WebLabel l31 = new WebLabel("Paid Amount : ", SwingConstants.RIGHT);
+		WebTextField actualQuantityText = new WebTextField(20);
+		actualQuantityText.setText("rtyert");
+
+		WebLabel l4 = new WebLabel("Payment Date : ", SwingConstants.RIGHT);
+		WebDateField deliveryDateText = new WebDateField(new Date());
+		
+		
+
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(5, 15, 5, 0);
+		layout.setConstraints(l1, c);
+		formPanel.add(l1);
+
+		c.gridx = 1;
+		c.gridy = 0;
+		c.insets = new Insets(5, 15, 5, 0);
+		layout.setConstraints(t1, c);
+		formPanel.add(t1);
+
+		c.gridx = 0;
+		c.gridy = 1;
+		c.insets = new Insets(15, 0, 5, 0); // top padding
+		layout.setConstraints(l2, c);
+		formPanel.add(l2);
+
+		c.gridx = 1;
+		c.gridy = 1;
+		c.insets = new Insets(15, 15, 5, 0);
+		layout.setConstraints(t2, c);
+		formPanel.add(t2);
+
+		c.gridx = 0;
+		c.gridy = 2;
+		c.insets = new Insets(15, 0, 5, 0); // top padding
+		layout.setConstraints(l3, c);
+		formPanel.add(l3);
+
+		c.gridx = 1;
+		c.gridy = 2;
+		c.insets = new Insets(15, 15, 5, 0);
+		layout.setConstraints(t3, c);
+		formPanel.add(t3);
+
+		c.gridx = 0;
+		c.gridy = 3;
+		c.insets = new Insets(15, 0, 0, 0); // top padding
+		layout.setConstraints(l31, c);
+		formPanel.add(l31);
+
+		c.gridx = 1;
+		c.gridy = 3;
+		c.insets = new Insets(15, 15, 0, 0);
+		layout.setConstraints(actualQuantityText, c);
+		formPanel.add(actualQuantityText);
+		
+		c.gridx = 0;
+		c.gridy = 4;
+		c.insets = new Insets(15, 0, 0, 0); // top padding
+		layout.setConstraints(l4, c);
+		formPanel.add(l4);
+
+		c.gridx = 1;
+		c.gridy = 4;
+		c.insets = new Insets(15, 15, 0, 0);
+		layout.setConstraints(deliveryDateText, c);
+		formPanel.add(deliveryDateText);
+		
+		ArrayList<PaymentEntryData> data = new ArrayList<PaymentEntryData>();
+		
+		final WebTable table = new WebTable(new PaymentEntryTableModel(data));
+		table.getTableHeader().setFont(new Font("verdana", Font.BOLD, 12));
+		table.setRowHeight(30);
+		table.setFont(new Font("verdana", Font.PLAIN, 12));
+		
+		WebButton button = new WebButton("Add Payment");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PaymentEntryTableModel model = (PaymentEntryTableModel) table.getModel();
+				PaymentEntryData d = new PaymentEntryData();
+				d.setAmount(Double.valueOf(3452345));
+				d.setEntryNumber(1);
+				d.setPaymentDate(new Date());				
+				model.getPaymentEntryList().add(d);
+				model.fireTableDataChanged();
+				revalidate();
+			}
+		});
+		
+		c.gridx = 2;
+		c.gridy = 4;
+		c.insets = new Insets(15, 15, 0, 0);
+		layout.setConstraints(button, c);
+		formPanel.add(button);	
+
+		
+		WebButton updateDeliveryDataButton = new WebButton("Update");
+		WebButton cancelButton = new WebButton("Cancel");		
+		WebPanel buttPanel = new WebPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+		buttPanel.add(updateDeliveryDataButton);
+		buttPanel.add(cancelButton);
+
+		
+		WebPanel p1 = new WebPanel(true);
+		p1.setLayout(new BorderLayout());
+		p1.add(formPanel, BorderLayout.WEST);
+
+
+		getContentPane().add(p1, BorderLayout.NORTH);		
+		getContentPane().add(new WebScrollPane(table), BorderLayout.CENTER);
+		getContentPane().add(buttPanel, BorderLayout.SOUTH);
+		setSize(900,500);
+	}
+	
+	
 
 	private void southPanelShow() {
 		final WebSplitButton splitButton = new WebSplitButton("Click me", WebLookAndFeel.getIcon(16));
@@ -193,7 +330,7 @@ public class TestApp extends WebFrame {
 
 		photoPanel = new WebPanel(new FlowLayout(FlowLayout.CENTER));
 		photoPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
-		ImageIcon image = new ImageIcon("D:/gaga/image/download.jpg");
+		ImageIcon image = new ImageIcon("E:/saikrupa/download.jpg");
 		WebLabel imageLabel = new WebLabel("", image, WebLabel.CENTER);
 		photoPanel.add(imageLabel);
 
@@ -254,10 +391,10 @@ public class TestApp extends WebFrame {
 						webcam.open();
 						BufferedImage image = webcam.getImage();
 						try {
-							ImageIO.write(image, "PNG", new File("D:/gaga/capture/test.png"));
+							ImageIO.write(image, "PNG", new File("E:/saikrupa/test.png"));
 							webcam.close();
 
-							ImageIcon capturedImage = new ImageIcon("D:/gaga/capture/test.png");
+							ImageIcon capturedImage = new ImageIcon("E:/saikrupa/test.png");
 							photoPanel.removeAll();
 							WebLabel label = new WebLabel("", capturedImage, WebLabel.CENTER);
 							photoPanel.add(label);
@@ -1188,6 +1325,127 @@ public class TestApp extends WebFrame {
 
 		getContentPane().add(new GroupPanel(formPanel), BorderLayout.CENTER);
 		setSize(500, 800);
+
+	}
+	
+	private void buildGUI_Update() {
+		WebPanel formPanel = new WebPanel();
+		formPanel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+		GridBagLayout layout = new GridBagLayout();
+		formPanel.setLayout(layout);
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+
+		WebLabel l1 = new WebLabel("Order Number : ", SwingConstants.RIGHT);
+		WebLabel t1 = new WebLabel("1234567");
+
+		WebLabel l2 = new WebLabel("Product : ", SwingConstants.RIGHT);
+		WebLabel t2 = new WebLabel("12 INCH EGL");
+
+		WebLabel l3 = new WebLabel("Ordered Quantity : ", SwingConstants.RIGHT);
+		WebLabel t3 = new WebLabel("270");
+		
+		WebLabel l31 = new WebLabel("Delivery Quantity : ", SwingConstants.RIGHT);
+		WebTextField t31 = new WebTextField(20);		
+
+		WebLabel l4 = new WebLabel("Delivery Date : ", SwingConstants.RIGHT);
+		WebTextField t4 = new WebTextField(20);
+		
+		WebLabel l5 = new WebLabel("Delivery Vehicle No : ", SwingConstants.RIGHT);
+		WebTextField t5 = new WebTextField(20);		
+
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(5, 15, 5, 0);
+		layout.setConstraints(l1, c);
+		formPanel.add(l1);
+
+		c.gridx = 1;
+		c.gridy = 0;
+		c.insets = new Insets(5, 15, 5, 0);
+		layout.setConstraints(t1, c);
+		formPanel.add(t1);
+
+		c.gridx = 0;
+		c.gridy = 1;
+		c.insets = new Insets(15, 0, 5, 0); // top padding
+		layout.setConstraints(l2, c);
+		formPanel.add(l2);
+
+		c.gridx = 1;
+		c.gridy = 1;
+		c.insets = new Insets(15, 15, 5, 0);
+		layout.setConstraints(t2, c);
+		formPanel.add(t2);
+
+		c.gridx = 0;
+		c.gridy = 2;
+		c.insets = new Insets(15, 0, 5, 0); // top padding
+		layout.setConstraints(l3, c);
+		formPanel.add(l3);
+
+		c.gridx = 1;
+		c.gridy = 2;
+		c.insets = new Insets(15, 15, 5, 0);
+		layout.setConstraints(t3, c);
+		formPanel.add(t3);
+
+		c.gridx = 0;
+		c.gridy = 3;
+		c.insets = new Insets(15, 0, 0, 0); // top padding
+		layout.setConstraints(l31, c);
+		formPanel.add(l31);
+
+		c.gridx = 1;
+		c.gridy = 3;
+		c.insets = new Insets(15, 15, 0, 0);
+		layout.setConstraints(t31, c);
+		formPanel.add(t31);
+		
+		c.gridx = 0;
+		c.gridy = 4;
+		c.insets = new Insets(15, 0, 0, 0); // top padding
+		layout.setConstraints(l4, c);
+		formPanel.add(l4);
+
+		c.gridx = 1;
+		c.gridy = 4;
+		c.insets = new Insets(15, 15, 0, 0);
+		layout.setConstraints(t4, c);
+		formPanel.add(t4);
+		
+		c.gridx = 0;
+		c.gridy = 5;
+		c.insets = new Insets(15, 0, 0, 0); // top padding
+		layout.setConstraints(l5, c);
+		formPanel.add(l5);
+
+		c.gridx = 1;
+		c.gridy = 5;
+		c.insets = new Insets(15, 15, 0, 0);
+		layout.setConstraints(t5, c);
+		formPanel.add(t5);
+		
+
+		WebButton b1 = new WebButton("Create");
+		WebButton b2 = new WebButton("Cancel");
+
+		WebPanel buttPanel = new WebPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+		buttPanel.add(b1);
+		buttPanel.add(b2);
+
+		c.gridx = 1;
+		c.gridy = 6;
+		c.insets = new Insets(15, 15, 0, 0);
+		c.gridwidth = 1;
+		layout.setConstraints(buttPanel, c);
+		formPanel.add(buttPanel);
+
+		getContentPane().add(new GroupPanel(formPanel), BorderLayout.CENTER);
+		getContentPane().add(new GroupPanel(new WebPanel()), BorderLayout.EAST);
+		getContentPane().add(new GroupPanel(new WebPanel()), BorderLayout.WEST);
+		//setSize(500, 800);
+		pack();
 
 	}
 

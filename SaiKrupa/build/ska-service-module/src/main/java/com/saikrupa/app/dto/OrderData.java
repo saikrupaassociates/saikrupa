@@ -25,7 +25,7 @@ public class OrderData {
 
 	private String code;
 	private Date createdDate;
-	private Date lastModifiedDate;
+	private Date lastModifiedDate;	
 
 	public OrderData() {
 		orderEntries = new ArrayList<OrderEntryData>();
